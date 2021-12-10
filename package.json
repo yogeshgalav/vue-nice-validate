@@ -1,0 +1,58 @@
+{
+  "name": "vue-form-mixin",
+  "version": "0.1.0",
+  "homepage": "https://github.com/yogeshgalav/vue-nice-table",
+  "description": "Light weight and good looking vue table component.",
+  "keywords": ["vue table", "stripe", "api sorting", "multi line legend", "light weight"],
+  "author": "Yogesh Galav <mr.yogesh.galav@gmail.com> (https://github.com/yogeshgalav/)",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.3",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "file-loader": "^6.2.0",
+    "node-sass": "^7.0.0",
+    "sass-loader": "^12.3.0",
+    "vue-loader": "^15.9.8",
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
