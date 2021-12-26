@@ -1,11 +1,13 @@
 {
   "name": "vue-form-mixin",
   "version": "0.1.0",
-  "homepage": "https://github.com/yogeshgalav/vue-nice-table",
-  "description": "Light weight and good looking vue table component.",
-  "keywords": ["vue table", "stripe", "api sorting", "multi line legend", "light weight"],
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "homepage": "https://github.com/yogeshgalav/vue-form-mixin",
+  "description": "Vue validation library in form of mixin.",
+  "keywords": ["vue validate", "v-validate", "multi form validation", "dynamic input field validation", "form mixin"],
   "author": "Yogesh Galav <mr.yogesh.galav@gmail.com> (https://github.com/yogeshgalav/)",
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -14,6 +16,13 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yogeshgalav/vue-form-mixin"
+  },
+  "bugs": {
+    "url": "https://github.com/yogeshgalav/vue-form-mixin/issues"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
