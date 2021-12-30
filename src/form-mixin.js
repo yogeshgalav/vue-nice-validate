@@ -1,3 +1,7 @@
+import runValidation from './validationRules.js';
+import validationMessages from './validationMessages.js';
+
+
 var form_fields= [];
 function setFormFieldData(field,rules,formName){
 	let validation_rules = {};	
@@ -18,7 +22,8 @@ function setFormFieldData(field,rules,formName){
 	});
 	return true;
 }
-import runValidation from './validationRules.js';
+
+
 const FormMixin = {
 	directives: {
 		validate:{
@@ -84,7 +89,7 @@ const FormMixin = {
 			if(this.$t){
 				return  this.$t('validation.'+field_error.rule_name,{'attribute': field_name});
 			}
-			return 
+			return validationMessages[field_error.rule_name].replace(':attribute', field_name);
 		},
 		onlyNumber ($event) {
 			let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
