@@ -1,9 +1,9 @@
-import FormMixin from "./form-mixin";
+import VueNiceValidate from "./VueNiceValidate.js";
 
 function install(Vue) {
   if (install.installed) return;
   install.installed = true;
-  Vue.component("vue-nice-pagination", FormMixin);
+  Vue.mixin(VueNiceValidate);
 }
 
 const plugin = {
@@ -20,6 +20,6 @@ if (GlobalVue) {
   GlobalVue.use(plugin);
 }
 
-FormMixin.install = install;
+VueNiceValidate.install = install;
 
-export default FormMixin;
+export default VueNiceValidate;

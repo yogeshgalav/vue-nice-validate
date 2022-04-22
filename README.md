@@ -1,17 +1,17 @@
-# Vue Form Mixin
-
+# Vue Nice Validate
+This is the light weight validation mixin similiar to vee-validate with extended support like third-party component validations, single input or selected input or perticular form validations.
 ## Project setup
 ```
-npm install vue-form-mixin
+npm install vue-nice-validate
 ```
 
 ## Usage
 ### Basic Usage
 ```
-import FormMixin from 'vue-form-mixin'
+import ValidateMixin from 'vue-nice-validate'
 
 export default {
-    mixins:[FormMixin]
+    mixins:[ValidateMixin]
 }
 ```
 ### Validating form fields
@@ -28,6 +28,7 @@ or pass object
     v-validate="{required:true,max:5}"
 >
 
+The validation field are searched and validated by their name attribute. If not present it will skip validation for that field. 
 
 Use formErrors Method with field_name as paramter to get error
 
@@ -53,7 +54,7 @@ methods:{
 use this.form_errors to get all errors
 ```
 
-### Validate multiple forms
+### Validate single forms
 ```
 To validate on only a single form use attribute validationScope
 
@@ -76,6 +77,88 @@ methods:{
         });
     }
 }
+```
+### Validate single input
+```
+To validate on only a single form use attribute validationScope
+
+<form>
+    <input
+        name="field_name"
+        v-validate="'required'"
+    >
+    <span class="text-danger">{{ formErrors('field_name') }}</span>
+</form>
+
+methods:{
+    handleSubmit(){
+        this.validateInput('field_name').then(result=>{
+            if(result){
+                \\validation successfull
+            }else{
+                \\validation failed
+            }
+        });
+    }
+}
+```
+### Validate multiple inputs
+```
+To validate on only a single form use attribute validationScope
+
+<form>
+    <input
+        name="field_name"
+        v-validate="'required'"
+    >
+    <span class="text-danger">{{ formErrors('field_name') }}</span>
+    <input
+        name="second_field_name"
+        v-validate="'required'"
+    >
+    <span class="text-danger">{{ formErrors('second_field_name') }}</span>
+</form>
+
+methods:{
+    handleSubmit(){
+        this.validateInputs(['field_name','second_field_name']).then(result=>{
+            if(result){
+                \\validation successfull
+            }else{
+                \\validation failed
+            }
+        });
+    }
+}
+```
+### Validate components
+```
+If v-model or value attribute is not present in component, It will read for attribute validation-value
+
+<third-party-component
+    name="field_name"
+    v-validate="'required'"
+    :validation-value="custom_value"
+>
+<span class="text-danger">{{ formErrors('field_name') }}</span>
+
+data(){
+    return {
+        custom_value:'',
+    };
+}
+
+```
+### Manually Add field 
+```
+If you still struggle with any third party component or have complex requirement just add the field from script section.
+
+this.addField(field_name,validation_rules,formName)
+where formName is optional parameter.
+```
+### Manually Manage Errors
+```
+As this.form_errors is available as data property you can simply add, update or delete error messages by your comfort.
 ```
 ### Use dynamic input names
 ```
