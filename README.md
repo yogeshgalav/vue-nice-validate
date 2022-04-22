@@ -15,6 +15,10 @@ export default {
 }
 ```
 ### Validating form fields
+
+The validation field are searched and validated by their name attribute. If not present it will skip validation for that field. 
+Use formErrors Method with field_name as paramter to get error
+
 ```
 <input
     name="field_name"
@@ -27,18 +31,14 @@ or pass object
     name="field_name"
     v-validate="{required:true,max:5}"
 >
-
-The validation field are searched and validated by their name attribute. If not present it will skip validation for that field. 
-
-Use formErrors Method with field_name as paramter to get error
-
 <span class="text-danger">{{ formErrors('field_name') }}</span>
 ```
 ### Get validation errors
-```
+
 use validateForm() method to validate all fields.
 It return a promise with a resolved value as true or false.
-
+use this.form_errors to get all errors.
+```
 methods:{
     handleSubmit(){
         this.validateForm().then(result=>{
@@ -51,13 +51,12 @@ methods:{
     }
 }
 
-use this.form_errors to get all errors
 ```
 
 ### Validate single forms
-```
-To validate on only a single form use attribute validationScope
 
+To validate on only a single form use attribute validationScope.
+```
 <form validationScope="form_name">
     <input
         name="field_name"
@@ -79,9 +78,9 @@ methods:{
 }
 ```
 ### Validate single input
-```
-To validate on only a single form use attribute validationScope
 
+To validate on only a single form use attribute validationScope
+```
 <form>
     <input
         name="field_name"
@@ -103,9 +102,9 @@ methods:{
 }
 ```
 ### Validate multiple inputs
-```
-To validate on only a single form use attribute validationScope
 
+To validate on only a single form use attribute validationScope
+```
 <form>
     <input
         name="field_name"
@@ -132,9 +131,9 @@ methods:{
 }
 ```
 ### Validate components
-```
-If v-model or value attribute is not present in component, It will read for attribute validation-value
 
+If v-model or value attribute is not present in component, It will read for attribute validation-value
+```
 <third-party-component
     name="field_name"
     v-validate="'required'"
@@ -149,30 +148,32 @@ data(){
 }
 
 ```
-### Manually Add field 
-```
-If you still struggle with any third party component or have complex requirement just add the field from script section.
+### Manually Add field
 
+If you still struggle with any third party component or have complex requirement just add the field from script section.
+```
 this.addField(field_name,validation_rules,formName)
 where formName is optional parameter.
 ```
+
 ### Manually Manage Errors
+
 ```
 As this.form_errors is available as data property you can simply add, update or delete error messages by your comfort.
 ```
 ### Use dynamic input names
-```
-Underscores will be automatically removed from field names in error message
 
+Underscores will be automatically removed from field names in error message
 For dynamic input fields use field name and hashtag
+```
 <input
     :name="'field_name#'+123"
     v-validate="'required'"
 >
 <span class="text-danger">{{ formErrors('field_name#'+123) }}</span>
-
-and error will be show as "field name is required."
 ```
+and error will be show as "field name is required."
+
 ### Use only number inside input field
 ```
 <input

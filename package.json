@@ -1,11 +1,12 @@
 {
-  "name": "vue-form-mixin",
+  "name": "vue-nice-validate",
   "version": "0.1.1",
   "main": "src/index.js",
   "bin": "src/index.js",
   "homepage": "https://github.com/yogeshgalav/vue-form-mixin",
   "description": "Vue validation library in form of mixin.",
   "keywords": [
+    "vue nice validate",
     "vue validate",
     "v-validate",
     "multi form validation",
