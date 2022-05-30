@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-nice-validate": "^0.1.1"
   },
   "repository": {
     "type": "git",
