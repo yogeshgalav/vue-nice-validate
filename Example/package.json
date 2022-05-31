@@ -10,7 +10,8 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "sass": "^1.51.0",
-    "vue": "^2.6.14"
+    "vue": "^2.6.14",
+    "vue-nice-validate": "file:.."
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

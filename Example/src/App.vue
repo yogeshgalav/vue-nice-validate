@@ -1,29 +1,18 @@
 <template>
 <div id="app">
-  <form @submit.prevent="onEnter" form>
-  <input
-                        v-validate="'required'"
-                        name="chatroom"
-                        class="form-control"
-                        placeholder="write Chatroom Name here"
-                       
-                        
-                      >
-                      
-                      </form>
-  <!-- <form validationScope="newform">
+  <form @submit.prevent="onEnter" validationScope=newform>
   <input
   name="field_name"
-  :v-validate="required" 
+  v-validate="'required'" 
   placeholder="edit me">
-  <button v-on:click="handleSubmit()">button</button>
-  </form> -->
+  <button v-on:click="onEnter">button</button>
+  </form>
 </div>
 </template>
 
 
 <script>
-import  FormMixin   from '../../src/VueNiceValidate.vue'
+import  FormMixin   from 'vue-nice-validate'
 export default {
   mixins:[FormMixin ],
   name: 'App',
@@ -31,11 +20,11 @@ export default {
   },
   methods: {
      onEnter(){
-        this.validateForm('field_name').then(result=>{
+        this.validateForm('newform').then(result=>{
             if(result){
-                console.log('asd');
+                alert('Its valid');
             }else{
-                console.log('asdd');
+                alert('Enter valid');
             }
         });
     }
