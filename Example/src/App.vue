@@ -4,7 +4,7 @@
   <input
   name="field_name"
   v-validate="'required'" 
-  placeholder="edit me">
+  placeholder="">
   <button v-on:click="onEnter">button</button>
   </form>
 </div>
