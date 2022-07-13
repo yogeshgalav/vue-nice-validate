@@ -1,30 +1,36 @@
 <template>
 <div id="app">
+    <h3>Validation</h3>
   <form @submit.prevent="onEnter" validationScope=newform>
-  <input
+  <input id="input"
   name="field_name"
   v-validate="'required'" 
-  placeholder="">
-  <button v-on:click="onEnter">button</button>
+  placeholder="Text">
+  <br/>
+  <button v-on:click="onEnter" id="button">button</button>
+  <br/>
+  <label id="text">click button to check if input is valid or not</label>
   </form>
 </div>
 </template>
 
 
 <script>
-import  FormMixin   from 'vue-nice-validate'
+import  FormMixin   from 'vue-nice-validate';
 export default {
   mixins:[FormMixin ],
   name: 'App',
-  components: {
-  },
   methods: {
-     onEnter(){
+     onEnter(){ 
+      var text = document.getElementById('text');
+
         this.validateForm('newform').then(result=>{
             if(result){
-                alert('Its valid');
+                text.innerHTML='Its valid';
+                text.style.color='#008000';
             }else{
-                alert('Enter valid');
+                text.innerHTML='Its not valid';
+                text.style.color='#ff0000';
             }
         });
     }
@@ -45,5 +51,11 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+#input{
+  padding:10px;
+}
+#button{
+  margin:10px;
 }
 </style>
