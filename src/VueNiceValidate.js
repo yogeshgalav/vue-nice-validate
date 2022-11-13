@@ -5,7 +5,6 @@ var form_fields = [];
 export default {
   form_fields,
   runValidation(to_be_validated_fields){
-    
     //run validation and add error to this.form_errors
     return new Promise((resolve, reject) => {
       this.form_errors = [];

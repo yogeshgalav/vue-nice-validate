@@ -20,7 +20,6 @@
     methods: {
        onEnter(){ 
         var text = document.getElementById('text');
-          console.log('wew',this.$validator);
           this.$validator.validateForm('newform').then(result=>{
               if(result){
                   text.innerHTML='Its valid';
