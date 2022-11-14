@@ -16,9 +16,9 @@
 
 
 <script>
-import  FormMixin   from 'vue-nice-validate';
+import  {ValidateMixin}   from 'vue-nice-validate';
 export default {
-  mixins:[FormMixin ],
+  mixins:[ValidateMixin],
   name: 'App',
   methods: {
      onEnter(){ 
