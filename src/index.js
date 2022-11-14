@@ -6,20 +6,8 @@ function install(Vue) {
   Vue.mixin(VueNiceValidate);
 }
 
-const plugin = {
-  install
-};
-
-let GlobalVue = null;
-if (typeof window !== "undefined") {
-  GlobalVue = window.Vue;
-} else if (typeof global !== "undefined") {
-  GlobalVue = global.vue;
-}
-if (GlobalVue) {
-  GlobalVue.use(plugin);
+export default function validatePlugin(){
+  return install; 
 }
 
-VueNiceValidate.install = install;
-
-export default VueNiceValidate;
+export const ValidateMixin = VueNiceValidate;
