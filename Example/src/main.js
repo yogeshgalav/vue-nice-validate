@@ -1,8 +1,8 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
+import './style.css'
 import App from './App.vue'
+import VueNiceValidate from 'vue-nice-validate';
 
-Vue.config.productionTip = false
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+const app = createApp(App);
+app.use(VueNiceValidate);
+app.mount('#app');

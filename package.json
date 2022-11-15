@@ -1,6 +1,6 @@
 {
   "name": "vue-nice-validate",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "main": "src/index.js",
   "bin": "src/index.js",
   "homepage": "https://github.com/yogeshgalav/vue-nice-validate",
@@ -29,8 +29,8 @@
     "url": "https://github.com/yogeshgalav/vue-nice-validate/issues"
   },
   "devDependencies": {
-    "vue": "^2.7.14",
-    "vite-plugin-vue2": "^2.0.2",
-    "vite": "^3.2.3"
+    "vue": "^3.2.13",
+    "@vitejs/plugin-vue": "^1.6.1",
+    "vite": "^2.5.4"
   }
 }

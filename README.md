@@ -8,11 +8,13 @@ npm install vue-nice-validate
 ## Usage
 ### Basic Usage
 ```
-import ValidateMixin from 'vue-nice-validate'
+import { createApp } from 'vue'
+import App from './App.vue'
+import VueNiceValidate from 'vue-nice-validate';
 
-export default {
-    mixins:[ValidateMixin]
-}
+const app = createApp(App);
+app.use(VueNiceValidate);
+app.mount('#app');
 ```
 ### Validating form fields
 
@@ -37,11 +39,11 @@ or pass object
 
 use validateForm() method to validate all fields.
 It return a promise with a resolved value as true or false.
-use this.form_errors to get all errors.
+use this.$validator.form_errors to get all errors.
 ```
 methods:{
     handleSubmit(){
-        this.validateForm().then(result=>{
+        this.$validator.validateForm().then(result=>{
             if(result){
                 \\validation successfull
             }else{
@@ -67,7 +69,7 @@ To validate on only a single form use attribute validationScope.
 
 methods:{
     handleSubmit(){
-        this.validateForm('form_name').then(result=>{
+        this.$validator.validateForm('form_name').then(result=>{
             if(result){
                 \\validation successfull
             }else{
@@ -91,7 +93,7 @@ To validate on only a single form use attribute validationScope
 
 methods:{
     handleSubmit(){
-        this.validateInput('field_name').then(result=>{
+        this.$validator.validateInput('field_name').then(result=>{
             if(result){
                 \\validation successfull
             }else{
@@ -120,7 +122,7 @@ To validate on only a single form use attribute validationScope
 
 methods:{
     handleSubmit(){
-        this.validateInputs(['field_name','second_field_name']).then(result=>{
+        this.$validator.validateInputs(['field_name','second_field_name']).then(result=>{
             if(result){
                 \\validation successfull
             }else{
@@ -152,14 +154,14 @@ data(){
 
 If you still struggle with any third party component or have complex requirement just add the field from script section.
 ```
-this.addField(field_name,validation_rules,formName)
+this.$validator.addField(field_name,validation_rules,formName)
 where formName is optional parameter.
 ```
 
 ### Manually Manage Errors
 
 ```
-As this.form_errors is available as data property you can simply add, update or delete error messages by your comfort.
+As this.$validator.form_errors is available as data property you can simply add, update or delete error messages by your comfort.
 ```
 ### Use dynamic input names
 
