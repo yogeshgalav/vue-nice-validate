@@ -3,6 +3,7 @@ import validationMessages from './validationMessages.js';
 
 var form_fields = [];
 const form_errors = [];
+const field_errors = {};
 
 function setFieldError(form_error,clear=false){
   //get current field errors from form_errors 
@@ -89,52 +90,53 @@ function setFormFieldData(fieldName, rules, formName) {
   return true;
 };
 
-export default function ValidatePlugin(){
-  install: (app, options) => {
-    app.config.globalProperties.$validator = validator;
+export default {
+  field_errors,
+  
+  validateDirective(el, binding) {
+    let form = el.closest("form");
+    setFormFieldData(
+      el.getAttribute("name"),
+      binding.value,
+      form ? form.getAttribute("validationScope") : ""
+    );
+  },
 
-    app.directive("validate", Validator.ValidateDirective);
-  }
-};
-export function ValidateDirective(el, binding) {
-  let form = el.closest("form");
-  setFormFieldData(
-    el.getAttribute("name"),
-    binding.value,
-    form ? form.getAttribute("validationScope") : ""
-  );
-};
-export  function validateForm(FormName=''){
-  const to_be_validated_fields = form_fields
-    .filter(form_field=>{
-      if(FormName && form_field.form_name!==FormName) return false;
-      return true;
+  validateForm(FormName=''){
+    const to_be_validated_fields = form_fields
+      .filter(form_field=>{
+        if(FormName && form_field.form_name!==FormName) return false;
+        return true;
+      });
+    return runValidation(to_be_validated_fields);
+  },
+
+  validateInputs(validate_fields=[]){
+    const to_be_validated_fields = form_fields
+      .filter(form_field=>validate_fields.includes(form_field.field_name));
+    return runValidation(to_be_validated_fields);
+  },
+
+  validateInput(validate_field=''){
+    const to_be_validated_fields = form_fields
+      .filter(form_field=>form_field.field_name===validate_field);
+    return runValidation(to_be_validated_fields);
+  },
+
+  addField(field,validation_rules,formName){
+    if(form_fields.some(el=>el.field_name===field)) return false;
+    form_fields.push({
+      'field_name':field,
+      'rules':validation_rules,
+      'form_name':formName ? formName : '',
     });
-  return runValidation(to_be_validated_fields);
-};
-export  function validateInputs(validate_fields=[]){
-  const to_be_validated_fields = form_fields
-    .filter(form_field=>validate_fields.includes(form_field.field_name));
-  return runValidation(to_be_validated_fields);
-};
-export  function validateInput(validate_field=''){
-  const to_be_validated_fields = form_fields
-    .filter(form_field=>form_field.field_name===validate_field);
-  return runValidation(to_be_validated_fields);
-};
-export  function addField(field,validation_rules,formName){
-  if(form_fields.some(el=>el.field_name===field)) return false;
-  form_fields.push({
-    'field_name':field,
-    'rules':validation_rules,
-    'form_name':formName ? formName : '',
-  });
-  return true;
-};
-export  function onlyNumber ($event) {
-  let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-  if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) { // 46 is dot
-    $event.preventDefault();
+    return true;
+  },
+
+  onlyNumber ($event) {
+    let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+    if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) { // 46 is dot
+      $event.preventDefault();
+    }
   }
-};
-export var field_errors = {};
+}
