@@ -10,7 +10,7 @@ export default {
   }
 };
 
-export const field_errors = VueNiceValidate.field_errors;
+export const fieldErrors = VueNiceValidate.field_errors;
 export const validateDirective = VueNiceValidate.validateDirective;
 export const validateForm = VueNiceValidate.validateForm;
 export const validateInputs = VueNiceValidate.validateInputs;
