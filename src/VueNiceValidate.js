@@ -1,9 +1,10 @@
 import validationRules from './validationRules.js';
 import validationMessages from './validationMessages.js';
+import { reactive } from 'vue';
 
 var form_fields = [];
 const form_errors = [];
-const field_errors = {};
+const field_errors = reactive({});
 
 function setFieldError(form_error,clear=false){
   //get current field errors from form_errors 
@@ -92,7 +93,7 @@ function setFormFieldData(fieldName, rules, formName) {
 
 export default {
   field_errors,
-  
+
   validateDirective(el, binding) {
     let form = el.closest("form");
     setFormFieldData(

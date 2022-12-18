@@ -1,3 +1,17 @@
+<p align="center">
+  <img width="250" src="http://vue-technologies.com/wp-content/uploads/2022/04/cropped-vue-logo-png.png">
+  <br>
+  <a href="https://npm.im/vue-nice-validate">
+    <img src="https://badgen.net/npm/v/vue-nice-validate">
+  </a>
+  <a href="https://npm.im/vue-nice-validate">
+    <img src="https://badgen.net/npm/dw/vue-nice-validate?color=blue">
+  </a>
+  <a href="https://bundlephobia.com/result?p=vue-nice-validate">
+    <img src="https://badgen.net/bundlephobia/minzip/vue-nice-validate">
+  </a>
+</p>
+
 # Vue Nice Validate
 VueNIceValidate is the light weight validation package. This package allows developers to full fill their basic requirements for form validation without heavy templating, heavy computaion and much code. You can validate single input, multiple inputs, single form or third party component with ease. You can easily access and modify field errors, rules and messages. 
 
