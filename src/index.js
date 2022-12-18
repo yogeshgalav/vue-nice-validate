@@ -1,14 +1,35 @@
 import validationRules from './validationRules.js';
 import validationMessages from './validationMessages.js';
 
-export const form_fields = [];
-export const form_errors = [];
+var form_fields = [];
+const form_errors = [];
 
+function setFieldError(form_error,clear=false){
+  //get current field errors from form_errors 
+    let key = '';
+    if(form_error.form_name){ 
+      key = form_error.form_name+'.'+form_error.field_name
+    }else{
+      key = form_error.field_name 
+    }
+    if(clear==true){
+      field_errors[key] = '';
+      return false;
+    }
+    let field_name = form_error.field_name;
+    field_name=field_name.replace(/_/g, ' ').split('#')[0];
+
+    let val = validationMessages[form_error.rule_name]
+    .replace(':attribute', field_name)
+    .replace(':param', form_error.rule_param);
+
+    field_errors[key] = val;
+    return true;
+};
 function runValidation(to_be_validated_fields){
   //run validation and add error to form_errors
   return new Promise((resolve, reject) => {
-    form_errors.length = 0;//clear all errors
-
+    form_errors.length = 0;
     try{
       to_be_validated_fields.forEach((field)=>{
         for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
@@ -18,13 +39,17 @@ function runValidation(to_be_validated_fields){
           if(!field_element) continue;
 
           let field_value = field_element.value || field_element.getAttribute('validation-value');
+          let form_error = {
+            'field_name':field.field_name,
+            'rule_name':rule_name,
+            'rule_param':rule_parameter,
+            'form_name':field.form_name,
+          };
           if(!validationRules[rule_name](field_value, rule_parameter)){
-            form_errors.push({
-              'field_name':field.field_name,
-              'rule_name':rule_name,
-              'rule_param':rule_parameter,
-              'form_name':field.form_name,
-            });
+            form_errors.push(form_error);
+            setFieldError(form_error);
+          }else{
+            setFieldError(form_error, true);
           }
         }
       });
@@ -63,14 +88,15 @@ function setFormFieldData(fieldName, rules, formName) {
   });
   return true;
 };
-export default function validatePlugin(){
+
+export default function ValidatePlugin(){
   install: (app, options) => {
     app.config.globalProperties.$validator = validator;
 
     app.directive("validate", Validator.ValidateDirective);
   }
 };
-export function validateDirective(el, binding) {
+export function ValidateDirective(el, binding) {
   let form = el.closest("form");
   setFormFieldData(
     el.getAttribute("name"),
@@ -105,35 +131,10 @@ export  function addField(field,validation_rules,formName){
   });
   return true;
 };
-export  function allErrors(){ /* eslint-disable-line no-unused-vars */
-  if(form_errors){
-    return form_errors.flatMap(node=>node);
-  }
-};
-export  function fieldError(field){
-  //get current field errors from form_errors 
-  let field_error = form_errors.find(node=>{
-    if(node.form_name) return (node.form_name+'.'+node.field_name)===field;
-    return node.field_name===field;
-  });
-
-  if(!field_error){
-    return '';
-  }
-  let field_name = field_error.field_name;
-  //remove string between brackets and remove underscore
-  field_name=field_name.replace(/_/g, ' ').split('#')[0];
-  if(this.$t){
-    return  this.$t('validation.'+field_error.rule_name,{'attribute': field_name});
-  }
-
-  return validationMessages[field_error.rule_name]
-    .replace(':attribute', field_name)
-    .replace(':param', field_error.rule_param);
-};
 export  function onlyNumber ($event) {
   let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
   if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) { // 46 is dot
     $event.preventDefault();
   }
 };
+export var field_errors = {};
