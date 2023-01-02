@@ -35,7 +35,8 @@ function runValidation(to_be_validated_fields){
     try{
       to_be_validated_fields.forEach((field)=>{
         for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
-          let field_element = document.getElementsByName(field.field_name)[0];
+          let field_element = document.getElementsByName(field.field_name)[0] ||
+          document.querySelector('[validation-name="'+field.field_name+'"]');
       
           //continue if field not found during validation
           if(!field_element) continue;
@@ -132,6 +133,14 @@ export default {
       'form_name':formName ? formName : '',
     });
     return true;
+  },
+
+  setValidationRules(ruleObject){
+    return Object.assign(validationRules, ruleObject);
+  },
+
+  setValidationMessages(msgObject){
+    return Object.assign(validationMessages, msgObject);
   },
 
   onlyNumber ($event) {
