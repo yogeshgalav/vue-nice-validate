@@ -156,6 +156,35 @@ methods:{
     }
 }
 ```
+### Add custom validation rules
+If you want to use your custom made rule, create a function with first parameter as input value and second parameter as array of rule parameters. And return boolean value.
+
+The "setValidationRules" function accepts single parameter as object containing rule functions. Original rule will be replaced with custom, if used with same name. 
+```
+import {setValidationRules} from 'vue-nice-validate';
+let phoneRule = function(value,country){
+    if(value.length===10 && country==='IN') return true;
+    return false;
+}
+setValidationRules({phoneRule});
+```
+You can use your custom rule with same function name inside directive
+```
+<input v-validate="'phoneRule:IN'" value="8003345821">
+```
+
+### Add custom validation messages
+If you want to use your custom messages, create an object with key as rule name and value as message. This message can have :attribute and :param inside it to be replaced with respective values.
+
+The "setValidationMessages" function accepts single parameter as object of messages.  Original message will be replaced with custom, if used with same key.
+```
+import {setValidationRules} from 'vue-nice-validate';
+let japaneseMsg = {
+    'digits' : ':attribute は :param 桁でなければなりません。'
+}
+setValidationMessages(japaneseMsg);
+```
+
 ### Validate components
 
 If v-model or value attribute is not present in component, It will read for attribute validation-value
