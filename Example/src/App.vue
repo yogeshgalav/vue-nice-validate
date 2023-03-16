@@ -6,6 +6,7 @@
     name="field_name"
     v-validate="'required'" 
     placeholder="Text">
+    <span>{{ fieldErrors['field_name'] }}</span>
     <br/>
     <button v-on:click="onEnter" id="button">button</button>
     <br/>
@@ -15,24 +16,20 @@
   </template>
   
   
-  <script>
-  export default {
-    methods: {
-       onEnter(){ 
+  <script setup>
+  import {fieldErrors, validateDirective, validateForm} from 'vue-nice-validate'
+       function onEnter(){ 
         var text = document.getElementById('text');
-          this.$validator.validateForm('newform').then(result=>{
-              if(result){
-                  text.innerHTML='Its valid';
-                  text.style.color='#008000';
-              }else{
-                  text.innerHTML='Its not valid';
-                  text.style.color='#ff0000';
-              }
-          });
-      }
-    },
-  };
-  
+        validateForm('newform').then(result=>{
+            if(result){
+                text.innerHTML='Its valid';
+                text.style.color='#008000';
+            }else{
+                text.innerHTML='Its not valid';
+                text.style.color='#ff0000';
+            }
+        });
+      }  
   </script>
   
   <style>

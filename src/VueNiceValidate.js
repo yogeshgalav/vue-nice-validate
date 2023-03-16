@@ -25,6 +25,10 @@ function setFieldError(form_error,clear=false){
     .replace(':attribute', field_name)
     .replace(':param', form_error.rule_param);
 
+    // val = form_error.rule_param.map((el,index)=>
+    //   val.replace(':param'+(index || ''), el)
+    // );
+    
     field_errors[key] = val;
     return true;
 };
