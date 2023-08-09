@@ -3,11 +3,11 @@
 import VueNiceValidate from "./VueNiceValidate";
 
 export default {
-  install: (app, options) => {
-    app.config.globalProperties.$validator = VueNiceValidate;
+	install: (app, options) => {
+		app.config.globalProperties.$validator = VueNiceValidate;
 
-    app.directive("validate", VueNiceValidate.ValidateDirective);
-  }
+		app.directive("validate", VueNiceValidate.ValidateDirective);
+	}
 };
 
 export const fieldErrors = VueNiceValidate.field_errors;
