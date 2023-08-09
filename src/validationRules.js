@@ -1,6 +1,6 @@
 
 function getExtension(filename) {
-	var parts = filename.split('.');
+	const parts = filename.split('.');
 	return parts[parts.length - 1];
 }
 
@@ -18,20 +18,16 @@ const validationRules = {
 		return false;
 	},
 	max: (value,max) =>{
-		if(!isNaN(value)) return (value <= max);
-		if(typeof value === 'string') return (value.length <= max);
-		return false;
+		return (value.toString().length <= max);
 	},
-	min: (value,max) =>{
-		if(!isNaN(value)) return (value >= max);
-		if(typeof value === 'string') return (value.length >= max);
-		return false;
+	min: (value,min) =>{
+		return (value.toString().length >= min);
 	},
 	email: (value) =>{
 		return String(value)
 			.toLowerCase()
 			.match(
-				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 			);
 	},
 	array: function (val) {
@@ -53,16 +49,16 @@ const validationRules = {
 		return /^[a-zA-Z0-9]+$/.test(val);
 	  },
 	  accepted: function (val) {
-		if (val === 'on' || val === 'yes' || val === 1 || val === '1' || val === true) {
+		if (val === 'on' || val === 'yes' || val === 1 || val === '1' || val === true) 
 		  return true;
-		}
+		
 	
 		return false;
 	  },
 	  regex: function (val, req) {
-		let reqPattern = req;
-		var mod = /[g|i|m]{1,3}$/;
-		var flag = req.match(mod);
+		// const reqPattern = req;
+		const mod = /[g|i|m]{1,3}$/;
+		let flag = req.match(mod);
 		flag = flag ? flag[0] : '';
 	
 		req = req.replace(mod, '').slice(1, -1);
@@ -82,22 +78,20 @@ const validationRules = {
 		);
 	  },
 	  numeric: function (val) {
-		var num;
+		const num = Number(val); // tries to convert value to a number. useful if value is coming from form element
 	
-		num = Number(val); // tries to convert value to a number. useful if value is coming from form element
-	
-		if (typeof num === 'number' && !isNaN(num) && typeof val !== 'boolean') {
+		if (typeof num === 'number' && !isNaN(num) && typeof val !== 'boolean') 
 		  return true;
-		} else {
+		 else 
 		  return false;
-		}
+		
 	  },
 	  confirmed: function (val, confirmation_field) {
-		var confirmed_value = document.getElementsByName(confirmation_field)[0].value;
+		const confirmed_value = document.getElementsByName(confirmation_field)[0].value;
 	
-		if (confirmed_value === val) {
+		if (confirmed_value === val) 
 		  return true;
-		}
+		
 	
 		return false;
 	  },
@@ -105,14 +99,14 @@ const validationRules = {
 		return String(parseInt(val, 10)) === String(val);
 	  },
 	  filetype: (filename,valid_extention) => {
-		var ext = getExtension(filename);
-		if(valid_extention.split(',').includes(ext)){
+		const ext = getExtension(filename);
+		if(valid_extention.split(',').includes(ext))
 			return true;
-		}
+		
 		return false;
 	  },
 	  image: (filename) => {
-		var ext = getExtension(filename);
+		const ext = getExtension(filename);
 		switch (ext.toLowerCase()) {
 		  case 'jpg':
 		  case 'gif':
@@ -124,7 +118,7 @@ const validationRules = {
 		return false;
 	  },
 	  video: (filename) => {
-		var ext = getExtension(filename);
+		const ext = getExtension(filename);
 		switch (ext.toLowerCase()) {
 		  case 'm4v':
 		  case 'avi':
@@ -134,6 +128,6 @@ const validationRules = {
 			return true;
 		}
 		return false;
-	  }
+	  },
 };
 export default  validationRules;

@@ -1,5 +1,21 @@
+<p align="center">
+  <img width="250" src="http://vue-technologies.com/wp-content/uploads/2022/04/cropped-vue-logo-png.png">
+  <br>
+  <a href="https://npm.im/vue-nice-validate">
+    <img src="https://badgen.net/npm/v/vue-nice-validate">
+  </a>
+  <a href="https://npm.im/vue-nice-validate">
+    <img src="https://badgen.net/npm/dw/vue-nice-validate?color=blue">
+  </a>
+  <a href="https://bundlephobia.com/result?p=vue-nice-validate">
+    <img src="https://badgen.net/bundlephobia/minzip/vue-nice-validate">
+  </a>
+</p>
+
 # Vue Nice Validate
-This is the light weight validation mixin similiar to vee-validate with extended support like third-party component validations, single input or selected input or perticular form validations.
+VueNIceValidate is the light weight validation package. This package allows developers to full fill their basic requirements for form validation without heavy templating, heavy computaion and much code. You can validate single input, multiple inputs, single form or third party component with ease. You can easily access and modify field errors, rules and messages. 
+
+This package is in early stage so feel free to make contribution and make this package better.
 ## Project setup
 ```
 npm install vue-nice-validate
@@ -7,6 +23,7 @@ npm install vue-nice-validate
 
 ## Usage
 ### Basic Usage
+Use as global plugin
 ```
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -15,6 +32,13 @@ import VueNiceValidate from 'vue-nice-validate';
 const app = createApp(App);
 app.use(VueNiceValidate);
 app.mount('#app');
+```
+In plugin mode you can globally access v-validate directive and this.$validator to access all validation properties.
+
+Or use in perticular component.
+```
+import { validateInputs, validateDirective, fieldErrors } from 'vue-nice-validate';
+const vValidate = validateDirective;
 ```
 ### Validating form fields
 
@@ -33,7 +57,7 @@ or pass object
     name="field_name"
     v-validate="{required:true,max:5}"
 >
-<span class="text-danger">{{ formErrors('field_name') }}</span>
+<span class="text-danger">{{ fieldErrors['field_name'] }}</span>
 ```
 ### Get validation errors
 
@@ -64,7 +88,7 @@ To validate on only a single form use attribute validationScope.
         name="field_name"
         v-validate="'required'"
     >
-    <span class="text-danger">{{ formErrors('form_name.field_name') }}</span>
+    <span class="text-danger">{{ fieldErrors['form_name.field_name'] }}</span>
 </form>
 
 methods:{
@@ -88,7 +112,7 @@ To validate on only a single form use attribute validationScope
         name="field_name"
         v-validate="'required'"
     >
-    <span class="text-danger">{{ formErrors('field_name') }}</span>
+    <span class="text-danger">{{ fieldErrors['field_name'] }}</span>
 </form>
 
 methods:{
@@ -112,12 +136,12 @@ To validate on only a single form use attribute validationScope
         name="field_name"
         v-validate="'required'"
     >
-    <span class="text-danger">{{ formErrors('field_name') }}</span>
+    <span class="text-danger">{{ fieldErrors['field_name'] }}</span>
     <input
         name="second_field_name"
         v-validate="'required'"
     >
-    <span class="text-danger">{{ formErrors('second_field_name') }}</span>
+    <span class="text-danger">{{ fieldErrors['second_field_name'] }}</span>
 </form>
 
 methods:{
@@ -132,6 +156,35 @@ methods:{
     }
 }
 ```
+### Add custom validation rules
+If you want to use your custom made rule, create a function with first parameter as input value and second parameter as array of rule parameters. And return boolean value.
+
+The "setValidationRules" function accepts single parameter as object containing rule functions. Original rule will be replaced with custom, if used with same name. 
+```
+import {setValidationRules} from 'vue-nice-validate';
+let phoneRule = function(value,country){
+    if(value.length===10 && country==='IN') return true;
+    return false;
+}
+setValidationRules({phoneRule});
+```
+You can use your custom rule with same function name inside directive
+```
+<input v-validate="'phoneRule:IN'" value="8003345821">
+```
+
+### Add custom validation messages
+If you want to use your custom messages, create an object with key as rule name and value as message. This message can have :attribute and :param inside it to be replaced with respective values.
+
+The "setValidationMessages" function accepts single parameter as object of messages.  Original message will be replaced with custom, if used with same key.
+```
+import {setValidationRules} from 'vue-nice-validate';
+let japaneseMsg = {
+    'digits' : ':attribute は :param 桁でなければなりません。'
+}
+setValidationMessages(japaneseMsg);
+```
+
 ### Validate components
 
 If v-model or value attribute is not present in component, It will read for attribute validation-value
@@ -141,7 +194,7 @@ If v-model or value attribute is not present in component, It will read for attr
     v-validate="'required'"
     :validation-value="custom_value"
 >
-<span class="text-danger">{{ formErrors('field_name') }}</span>
+<span class="text-danger">{{ fieldErrors['field_name'] }}</span>
 
 data(){
     return {
@@ -172,7 +225,7 @@ For dynamic input fields use field name and hashtag
     :name="'field_name#'+123"
     v-validate="'required'"
 >
-<span class="text-danger">{{ formErrors('field_name#'+123) }}</span>
+<span class="text-danger">{{ fieldErrors['field_name#'+123] }}</span>
 ```
 and error will be show as "field name is required."
 

@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
-import './style.css'
-import App from './Local.vue'
+import App from './App.vue'
 import VueNiceValidate from 'vue-nice-validate';
 
 const app = createApp(App);
