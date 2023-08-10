@@ -5,61 +5,61 @@ function getExtension(filename) {
 }
 
 const validationRules = {
-	required: (value) =>{
+	required(value) {
 		if(value && value.toString().trim()) return true;
 		return false;
 	},
-	digits: (value,max) =>{
+	digits(value,max) {
 		if(!isNaN(value)) return (value.toString().length === parseInt(max));
 		return false;
 	},
-	digit_between: (value,max) =>{
+	digit_between(value,max) {
 		if(!isNaN(value)) return value.toString().length <= max;
 		return false;
 	},
-	max: (value,max) =>{
+	max(value,max) {
 		if(!isNaN(value)) return (value <= max);
 		if(typeof value === 'string') return (value.length <= max);
 		return false;
 	},
-	min: (value,max) =>{
+	min(value,max) {
 		if(!isNaN(value)) return (value >= max);
 		if(typeof value === 'string') return (value.length >= max);
 		return false;
 	},
-	email: (value) =>{
+	email(value) {
 		return String(value)
 			.toLowerCase()
 			.match(
 				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 			);
 	},
-	array: function (val) {
+	array(val) {
 		return val instanceof Array;
 	  },
 	
-	  url: function (url) {
+	  url(url) {
 		return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-z]{2,63}\b([-a-zA-Z0-9@:%_\+.~#?&/=]*)/i.test(url);
 	  },
 	
-	  alpha: function (val) {
+	  alpha(val) {
 		return /^[a-zA-Z]+$/.test(val);
 	  },
 	
-	  alpha_dash: function (val) {
+	  alpha_dash(val) {
 		return /^[a-zA-Z0-9_\-]+$/.test(val);
 	  },
-	  alpha_num: function (val) {
+	  alpha_num(val) {
 		return /^[a-zA-Z0-9]+$/.test(val);
 	  },
-	  accepted: function (val) {
+	  accepted(val) {
 		if (val === 'on' || val === 'yes' || val === 1 || val === '1' || val === true) {
 		  return true;
 		}
 	
 		return false;
 	  },
-	  regex: function (val, req) {
+	  regex(val, req) {
 		let reqPattern = req;
 		var mod = /[g|i|m]{1,3}$/;
 		var flag = req.match(mod);
@@ -69,7 +69,7 @@ const validationRules = {
 		req = new RegExp(req, flag);
 		return !!req.test(val);
 	  },
-	  boolean: function (val) {
+	  boolean(val) {
 		return (
 		  val === true ||
 		  val === false ||
@@ -81,7 +81,7 @@ const validationRules = {
 		  val === 'false'
 		);
 	  },
-	  numeric: function (val) {
+	  numeric(val) {
 		var num;
 	
 		num = Number(val); // tries to convert value to a number. useful if value is coming from form element
@@ -92,7 +92,7 @@ const validationRules = {
 		  return false;
 		}
 	  },
-	  confirmed: function (val, confirmation_field) {
+	  confirmed(val, confirmation_field) {
 		var confirmed_value = document.getElementsByName(confirmation_field)[0].value;
 	
 		if (confirmed_value === val) {
@@ -101,17 +101,17 @@ const validationRules = {
 	
 		return false;
 	  },
-	  integer: function (val) {
+	  integer(val) {
 		return String(parseInt(val, 10)) === String(val);
 	  },
-	  filetype: (filename,valid_extention) => {
+	  filetype(filename,valid_extention) {
 		var ext = getExtension(filename);
 		if(valid_extention.split(',').includes(ext)){
 			return true;
 		}
 		return false;
 	  },
-	  image: (filename) => {
+	  image(filename) {
 		var ext = getExtension(filename);
 		switch (ext.toLowerCase()) {
 		  case 'jpg':
@@ -123,7 +123,7 @@ const validationRules = {
 		}
 		return false;
 	  },
-	  video: (filename) => {
+	  video(filename) {
 		var ext = getExtension(filename);
 		switch (ext.toLowerCase()) {
 		  case 'm4v':

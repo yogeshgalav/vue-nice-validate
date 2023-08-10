@@ -1,82 +1,128 @@
 import validationRules from './validationRules.js';
 import validationMessages from './validationMessages.js';
 
-var form_fields= [];
-function setFormFieldData(field,rules,formName){
-	let validation_rules = {};	
-	if(typeof rules === 'string'){
-		rules.split('|').map(node=>{
-			let ru = node.split(':');
-			validation_rules[ru[0]]= ru[1] ? ru[1] : true; 
+const form_fields = [];
+function setFormFieldData(fieldName, rules, formName) {
+	let validation_rules = {};
+	if (typeof rules === "string") 
+		rules.split("|").map((node) => {
+			const ru = node.split(":");
+			validation_rules[ru[0]] = ru[1] ? ru[1] : true;
 		});
-	}else if(typeof rules === 'object'){
-		validation_rules = Object.assign({},rules);
-	}else{
+	else if (typeof rules === "object") 
+		validation_rules = Object.assign({}, rules);
+	else 
 		return false;
+
+
+	const already_present_field = form_fields.find(el=>el.field_name===fieldName && el.formName===formName);
+	if(already_present_field){
+		already_present_field.rules = validation_rules;
+		return true;
 	}
+
 	form_fields.push({
-		'field_name':field,
-		'rules':validation_rules,
-		'form_name':formName ? formName : '',
+		field_name: fieldName,
+		rules: validation_rules,
+		form_name: formName,
 	});
 	return true;
 }
 
-
-const FormMixin = {
+export default {
 	directives: {
 		validate:{
 			inserted: function (el,binding) {
 				let form = el.closest('form');
-				setFormFieldData(el.getAttribute('name'),binding.value,form ? form.getAttribute('validationScope') : '');
+				setFormFieldData(el.id, binding.value, (form ? form.getAttribute('validationScope') : ''));
 			}
 		}
 	},
 	data(){
-		return{
-			form_errors:[],
+		return {
+			form_errors: [],
 		};
 	},
-	created(){
-		// let comp = this;
-		// Object.defineProperty(Vue.prototype, '$validator', {
-		// 	value: comp,
-		// });
+	computed:{
+		fieldErrors(){
+			let field_errors = [];
+			this.form_errors.forEach(el=>{
+				let key = '';
+				if(el.form_name){
+					key = el.form_name+'.'+el.field_name
+				}else{
+					key = el.field_name 
+				}
+
+				let field_name = el.field_name;
+				field_name=field_name.replace(/_/g, ' ').split('#')[0];
+	
+				const val = validationMessages[el.rule_name]
+					.replace(':attribute', field_name)
+					.replace(':param', el.rule_param);
+
+				field_errors[key] = val;
+			});
+			
+			return field_errors;
+		}
 	},
 	methods:{
 		runValidation(to_be_validated_fields){
-			
 			//run validation and add error to this.form_errors
 			return new Promise((resolve, reject) => {
-				this.form_errors = [];
+				this.form_errors.length = 0;
 				try{
-					to_be_validated_fields.forEach((form_field)=>{
-						for (const [rule_name, rule_parameter] of Object.entries(form_field.rules)) {
-							let field_element = document.getElementsByName(form_field.field_name)[0];
-					
-							//continue if field not found during validation
-							if(!field_element) continue;
+					to_be_validated_fields.forEach((field)=>{
+						for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
+							const field_element = document.getElementById(field.field_name);
 
-							let field_value = field_element.value || field_element.getAttribute('validation-value');
-							if(!validationRules[rule_name](field_value, rule_parameter)){
-								this.form_errors.push({
-									'field_name':form_field.field_name,
-									'rule_name':rule_name,
-									'rule_param':rule_parameter,
-									'form_name':form_field.form_name,
-								});
+							//continue if field not found during validation
+							if(!field_element) {
+								console.error('Field with id #'+field.field_name+' not found for validation.');
+								continue;
 							}
+							if(!validationRules[rule_name]){
+								console.error('Validation rule "'+rule_name+'" not found for field with id #'+field.field_name+'.');
+								continue;
+							}
+
+							const field_value = field_element.value || field_element.getAttribute('validation-value');
+							const form_error = {
+								'field_name':field.field_name,
+								'rule_name':rule_name,
+								'rule_param':rule_parameter,
+								'form_name':field.form_name,
+							};
+
+							if(!validationRules[rule_name](field_value, rule_parameter)){
+								this.form_errors.push(form_error);
+							}else{
+								this.form_errors.splice(this.form_errors.indexOf(form_error), 1);
+							}
+								
+
 						}
 					});
 				}catch(e){
 					reject(e);
 				}
-				if(this.form_errors.length){
+				if(this.form_errors.length)
 					resolve(false);
-				}
+      
 				resolve(true);
 			});
 		},
+		
+		validateDirective(el, binding) {
+			const form = el.closest("form");
+			this.setFormFieldData(
+				el.getAttribute("name"),
+				binding.value,
+				form ? form.getAttribute("validationScope") : "",
+			);
+		},
+
 		validateForm(FormName=''){
 			const to_be_validated_fields = form_fields
 				.filter(form_field=>{
@@ -85,16 +131,19 @@ const FormMixin = {
 				});
 			return this.runValidation(to_be_validated_fields);
 		},
+
 		validateInputs(validate_fields=[]){
 			const to_be_validated_fields = form_fields
-				.filter(form_field=>validate_fields.includes(form_field.field_name));
+				.filter(el=>validate_fields.includes(el.field_name));
 			return this.runValidation(to_be_validated_fields);
 		},
+
 		validateInput(validate_field=''){
 			const to_be_validated_fields = form_fields
-				.filter(form_field=>form_field.field_name===validate_field);
+				.filter(el=>el.field_name===validate_field);
 			return this.runValidation(to_be_validated_fields);
 		},
+
 		addField(field,validation_rules,formName){
 			if(form_fields.some(el=>el.field_name===field)) return false;
 			form_fields.push({
@@ -104,42 +153,12 @@ const FormMixin = {
 			});
 			return true;
 		},
-		collectErrors:function(field){ /* eslint-disable-line no-unused-vars */
-			if(this.form_errors){
-				return this.form_errors.flatMap(node=>node);
-			}
-		},
-		formErrors:function(field){
 
-			if (!this.form_errors || !this.form_errors.length) {
-				return null;
-			}
-			//get current field errors from this.form_errors 
-			let field_error = this.form_errors.find(node=>{
-				if(node.form_name) return (node.form_name+'.'+node.field_name)===field;
-				return node.field_name===field;
-			});
-
-			if(!field_error){
-				return '';
-			}
-			let field_name = field_error.field_name;
-			//remove string between brackets and remove underscore
-			field_name=field_name.replace(/_/g, ' ').split('#')[0];
-			if(this.$t){
-				return  this.$t('validation.'+field_error.rule_name,{'attribute': field_name});
-			}
-
-			return validationMessages[field_error.rule_name]
-				.replace(':attribute', field_name)
-				.replace(':param', field_error.rule_param);
-		},
 		onlyNumber ($event) {
-			let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-			if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) { // 46 is dot
+			const keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+			if ((keyCode < 48 || keyCode > 57) && keyCode !== 190)  // 46 is dot
 				$event.preventDefault();
-			}
+    
 		},
 	}
-};
-export default  FormMixin;
+}

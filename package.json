@@ -31,6 +31,11 @@
   "devDependencies": {
     "vue": "^2.7.14",
     "vite-plugin-vue2": "^2.0.2",
-    "vite": "^3.2.3"
+    "vite": "^3.2.3",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-vue": "^8.0.3"
   }
 }
