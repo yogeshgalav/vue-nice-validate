@@ -57,10 +57,19 @@ export default {
 				let field_name = el.field_name;
 				field_name=field_name.replace(/_/g, ' ').split('#')[0];
 	
+				
 				const val = validationMessages[el.rule_name]
 					.replace(':attribute', field_name)
 					.replace(':param', el.rule_param);
+				// let val = validationMessages[el.rule_name]
+				// 	.replace(':attribute', field_name);
 
+				// el.rule_param.split(',').forEach((el2,in2)=>{
+				// 	val.replace(':param'+(in2 ? in2 : ''), el2);
+				// });
+				// if(typeof this.$t === 'function'){
+				// 	return this.$t(validationMessages[el.rule_name],el);
+				// }
 				field_errors[key] = val;
 			});
 			
@@ -154,11 +163,12 @@ export default {
 			return true;
 		},
 
-		onlyNumber ($event) {
-			const keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-			if ((keyCode < 48 || keyCode > 57) && keyCode !== 190)  // 46 is dot
-				$event.preventDefault();
-    
+		addValidationRules(ruleObject){
+			return Object.assign(validationRules, ruleObject);
+		},
+		
+		addValidationMessages(msgObject){
+			return Object.assign(validationMessages, msgObject);
 		},
 	}
 }
