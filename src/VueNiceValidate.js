@@ -84,7 +84,7 @@ export default {
 				try{
 					to_be_validated_fields.forEach((field)=>{
 						for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
-							const field_element = document.getElementById(field.field_name);
+							const field_element = document.getElementById(field.field_name) || document.querySelector('[validation-id="'+field.field_name+'"]');
 
 							//continue if field not found during validation
 							if(!field_element) {
@@ -96,7 +96,7 @@ export default {
 								continue;
 							}
 
-							const field_value = field_element.value || field_element.getAttribute('validation-value');
+							const field_value = field_element.value || field_element.getAttribute('validation-value') || '';
 							const form_error = {
 								'field_name':field.field_name,
 								'rule_name':rule_name,
