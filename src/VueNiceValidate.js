@@ -84,7 +84,7 @@ export default {
 		runValidation(to_be_validated_fields){
 			//run validation and add error to this.field_errors
 			return new Promise((resolve, reject) => {
-				this.field_errors.length = 0;
+				this.field_errors.splice(0, this.field_errors.length);
 				console.log(this.field_errors);
 				try{
 					to_be_validated_fields.forEach((field)=>{
