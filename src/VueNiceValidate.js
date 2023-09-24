@@ -85,7 +85,6 @@ export default {
 			//run validation and add error to this.field_errors
 			return new Promise((resolve, reject) => {
 				this.field_errors.splice(0, this.field_errors.length);
-				console.log(this.field_errors);
 				try{
 					to_be_validated_fields.forEach((field)=>{
 						for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
@@ -110,8 +109,6 @@ export default {
 							};
 							if(!validationRules[rule_name](field_value, rule_parameter)){
 								this.field_errors.push(field_error);
-							} else {
-								this.field_errors.splice(this.field_errors.indexOf(field_error), 1)
 							}
 						}
 					});
