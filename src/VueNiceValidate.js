@@ -1,176 +1,161 @@
 import validationRules from './validationRules.js';
 import validationMessages from './validationMessages.js';
 
-const input_fields = [];
-function setInputFieldData(fieldId, fieldName='', rules, touch) {
-	let validation_rules = {};
-	if (typeof rules === "string") 
-		rules.split("|").map((node) => {
-			const ru = node.split(":");
-			validation_rules[ru[0]] = ru[1] ? ru[1] : true;
-		});
-	else if (typeof rules === "object") 
-		validation_rules = Object.assign({}, rules);
-	else 
-		return false;
-
-	let new_field = {
-		field_id: fieldId,
-		field_name: fieldName,
-		rules: validation_rules,
-	};
-	const already_present_field = input_fields.find(el=>el.field_id===fieldId);
-	if(already_present_field){
-		already_present_field.rules = validation_rules;
-	} else {
-		input_fields.push(new_field);
-	}
-	
-	if(touch){
-		runValidation([new_field]);
-	}
-	return true;
-}
-
-export default {
+const allErrors = [];
+const validator = {
 	directives: {
-		validate:{
-			inserted: function(el, binding) {
-				let field = el.tagName.toLowerCase() == 'input' ? el : el.getElementsByTagName('input')[0];
-				if(!field){
+		// register a custom directive called v-validate
+		validate: {
+			bind(el, binding, vnode) {
+				// get the input element
+				let field = el.tagName.toLowerCase() == 'input' ? el : el.querySelector('input');
+				let form = el.closest('form');
+				if (!field) {
+					/* eslint-disable-next-line */
 					console.error('Input field not found.')
 				}
 
-				let field_name = field.name || field.id.replace(/_/g, ' ');
-				if(field_name.includes('.')) field_name = field_name.split('.').slice(-1).pop();
-
-				setInputFieldData(field.id, field_name, binding.value, binding.arg == 'touch');
+				//add field to input fields bag
+				let validator_field = vnode.context.addField(field.getAttribute('id'), field.getAttribute('name'), (form?.getAttribute('name') || ''), binding.value, binding.arg == 'touch');
+				if (!validator_field) {
+					return false;
+				}
+				field.addEventListener('input', function (event) {
+					return vnode.context.runValidation(event.target.value, validator_field);
+				});
 			},
 		}
 	},
-	data(){
+	data() {
 		return {
-			field_errors: [],
+			inputFields: [],
 		};
 	},
-	computed:{
-		formErrors(){
-			let errors = [];
-			// console.log(this.field_errors);
-			this.field_errors.forEach(el=>{
-				let key = el.field_id;
-				
-				const val = validationMessages[el.rule_name]
-					.replace(':attribute', el.field_name)
-					.replace(':param', el.rule_param);
-				// let val = validationMessages[el.rule_name]
-				// 	.replace(':attribute', field_id);
+	computed: {
+		formErrors() {
+			let form_errors = {};
 
-				// el.rule_param.split(',').forEach((el2,in2)=>{
-				// 	val.replace(':param'+(in2 ? in2 : ''), el2);
-				// });
-				// if(typeof this.$t === 'function'){
-				// 	return this.$t(validationMessages[el.rule_name],el);
-				// }
-				errors[key] = val;
-			});
-			// console.log("errors",errors);
-			
-			return errors;
-		},
+			this.inputFields.filter(el => el.has_error && el.show_error)
+				.forEach(el => {
+					form_errors[el.field_id] = el.error_msg;
+				});
+			return form_errors;
+		}
 	},
-
-	methods:{
-		runValidation(to_be_validated_fields){
-			//run validation and add error to this.field_errors
-			return new Promise((resolve, reject) => {
-				this.field_errors.splice(0, this.field_errors.length);
-				try{
-					to_be_validated_fields.forEach((field)=>{
-						for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
-							const field_element = document.getElementById(field.field_id);
-
-							//continue if field not found during validation
-							if(!field_element) {
-								console.error('Field with id #'+field.field_id+' not found for validation.');
-								continue;
-							}
-							if(!validationRules[rule_name]){
-								console.error('Validation rule "'+rule_name+'" not found for field with id #'+field.field_id+'.');
-								continue;
-							}
-
-							const field_value = field_element.value || '';
-							const field_error = {
-								'field_id':field.field_id,
-								'field_name':field.field_name,
-								'rule_name':rule_name,
-								'rule_param':rule_parameter,
-							};
-							if(!validationRules[rule_name](field_value, rule_parameter)){
-								this.field_errors.push(field_error);
-							}
-						}
-					});
-				}catch(e){
-					reject(e);
-				}
-				if(this.field_errors.length)
-					resolve(false);
-      
-				resolve(true);
-			});
-		},
-
-		
+	methods: {
 		// validateDirective(el, binding) {
 		// 	let field = el.tagName.toLowerCase() == 'input' ? el : el.getElementsByTagName('input')[0];
 		// 	if(!field){
 		// 		console.error('Input field not found.')
 		// 	}
-		// 	setInputFieldData(field.id, field.name, binding.value, binding.arg == 'touch');
+		// 	this.addField(field.id, field.name, binding.value, binding.arg == 'touch');
 		// },
+		addField(fieldId, fieldName = '', formName = '', rules, touch) {
 
-		validateForm(FormName=''){
+			// get the field_name from name or id attribute of the input element
+			let field_name = fieldName || fieldId.replace(/_/g, ' ');
+			if (field_name.includes('.')) field_name = field_name.split('.').slice(-1).pop();
 
-			const to_be_validated_fields = input_fields
-				.filter(field=>{
-					if(FormName && !field.field_id.includes(FormName+'.')) return false;
-					return true;
+			let validation_rules = {};
+			//construct validation_rules object from string format
+			if (typeof rules === "string")
+				//get all rules seprated by | and loop over to convert them 
+				rules.split("|").map((rule) => {
+					// split the rule by : to get the rule and the parameter (if any)
+					const ru = rule.split(":");
+					validation_rules[ru[0]] = ru[1] ? ru[1] : true;
 				});
-			return this.runValidation(to_be_validated_fields);
-		},
+			//no need to do anything if rules are already define in object format
+			else if (typeof rules === "object")
+				validation_rules = Object.assign({}, rules);
+			else
+				return false;
 
-		validateInputs(validate_fields=[]){
-			const to_be_validated_fields = input_fields
-				.filter(el=>validate_fields.includes(el.field_id));
-			return this.runValidation(to_be_validated_fields);
-		},
+			const already_present_field = this.inputFields.find(el => el.field_id === fieldId);
+			if (already_present_field) {
+				/* eslint-disable-next-line */
+				console.error('Duplicate field found with id ' + field.field_id + '.');
+				return false;
+			}
 
-		validateInput(validate_field=''){
-			const to_be_validated_fields = input_fields
-				.filter(el=>el.field_id===validate_field);
-			return this.runValidation(to_be_validated_fields);
-		},
+			const new_field = {
+				'field_id': fieldId,
+				'field_name': field_name,
+				'form_name': '',
+				'rules': validation_rules,
+				'has_error': false,
+				'error_msg': '',
+				'failed_rule': '',
+				'show_error': touch
+			};
 
-		addField(field_id,validation_rules,field_name=''){
-			//if already present don't add to input_fields bag
-			if(input_fields.some(el=>el.field_id===field_id)) return false;
-			//add to input_fields bag
-			input_fields.push({
-				'field_id':field_id,
-				'field_name':field_name,
-				'rules':validation_rules,
+			this.inputFields.push(new_field);
+
+			return new_field;
+		},
+		runValidation(field_value, field) {
+
+			// loop through the validators array
+			for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
+
+				if (!validationRules[rule_name]) {
+					/* eslint-disable-next-line */
+					console.error('Validation rule "' + rule_name + '" not found for field with id #' + field.field_id + '.');
+					continue;
+				}
+
+
+				let result = validationRules[rule_name](field_value, rule_parameter);
+				field['has_error'] = !result;
+
+				if (!result) {
+					field['error_msg'] = validationMessages[rule_name];
+					field['failed_rule'] = rule_name;
+					// stop the loop
+					break;
+				}
+			}
+		},
+		checkValidation(to_be_validated_fields) {
+			return new Promise((resolve, reject) => {
+				to_be_validated_fields.forEach(el => this.runValidation('', el));
+				let error_present = to_be_validated_fields
+					.map(el => { el.show_error = true; return el; })
+					.some(el => el.has_error);
+
+				resolve(error_present);
 			});
-			return true;
+		},
+		validateForm(FormName = '') {
+			const to_be_validated_fields = this.inputFields
+			// .filter(field => {
+			// 	if (FormName && field.form_name != FormName) return false;
+			// 	return true;
+			// });
+
+			return this.checkValidation(to_be_validated_fields);
 		},
 
-		addValidationRules(ruleObject){
+		validateInputs(validate_fields = []) {
+			const to_be_validated_fields = this.inputFields
+				.filter(el => validate_fields.includes(el.field_id));
+			return this.checkValidation(to_be_validated_fields);
+		},
+
+		validateInput(validate_field = '') {
+			const to_be_validated_fields = this.inputFields
+				.filter(el => el.field_id === validate_field);
+			return this.checkValidation(to_be_validated_fields);
+		},
+
+		addValidationRules(ruleObject) {
 			return Object.assign(validationRules, ruleObject);
 		},
-		
-		addValidationMessages(msgObject){
+
+		addValidationMessages(msgObject) {
 			return Object.assign(validationMessages, msgObject);
 		},
 	}
 }
+
+export default validator;

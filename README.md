@@ -182,3 +182,39 @@ and error will be show as "field name is required."
     v-validate="'required'"
 >
 ```
+
+//validate via data
+loginForm:{
+    full_name
+}
+
+registerForm:{
+    full_name
+}
+
+validateData(loginForm);
+watch(this.loginForm){}
+
+validateData(registerForm);
+watch(this.registerForm){}
+
+only one form errors can be watched at one time
+
+if multiple form validate together
+validateData({loginForm:this.loginForm, registerForm:this.registerForm});
+watch(this.formData){}
+
+//validate via html
+<input id="loginForm.full_name">
+
+validateForm('loginForm'){
+    //validate every field starting with 'loginForm'+'.'
+    this.formData = this.loginForm
+}
+
+..how to watch changes to 'loginForm' or every data;
+
+//what if array inputs are there
+customers:[{full_name:''},{full_name:''}]
+<input id="customers.0.full_name">
+validateData(customers);
