@@ -1,39 +1,66 @@
-import validationRules from './validationRules.js';
-import validationMessages from './validationMessages.js';
+import validationRules from './validationRules';
+import validationMessages from './validationMessages';
 
-const allErrors = [];
-const validator = {
+function messageFormatter(ruleName, params, local = 'en') {
+	// if (i18n) {
+	//     return i18n.t(ruleName, params);
+	// }
+
+	let str = validationMessages[ruleName];
+	//replace sub-string enclosed in {} with params 
+	//params = {'attribute':'field_name','max':'265','min':'3'}
+	str = str.replace(/{[^{}]+}/g, function (match) {
+		return params[match.slice(1, -1)];
+	});
+	return str;
+}
+
+interface ValidatorField {
+	field_id: string;
+	field_name: string;
+	form_name: string;
+	rules: Record<string, any>;
+	has_error: boolean;
+	error_msg: string;
+	failed_rule: string;
+	show_error: boolean;
+}
+
+export default {
 	directives: {
 		// register a custom directive called v-validate
 		validate: {
-			bind(el, binding, vnode) {
+			bind(el: HTMLElement, binding: any, vnode: any): boolean {
 				// get the input element
 				let field = el.tagName.toLowerCase() == 'input' ? el : el.querySelector('input');
 				let form = el.closest('form');
-				if (!field) {
+				if (!field || !field.getAttribute('id')) {
 					/* eslint-disable-next-line */
-					console.error('Input field not found.')
+					console.error('Input field not found.');
+					return false;
 				}
 
 				//add field to input fields bag
-				let validator_field = vnode.context.addField(field.getAttribute('id'), field.getAttribute('name'), (form?.getAttribute('name') || ''), binding.value, binding.arg == 'touch');
+				let validator_field = vnode.context.addField(field.getAttribute('id'), binding.value, binding.arg == 'touch', field.getAttribute('name') || '', (form?.getAttribute('name') || ''));
 				if (!validator_field) {
 					return false;
 				}
 				field.addEventListener('input', function (event) {
-					return vnode.context.runValidation(event.target.value, validator_field);
+					let field_value = (event.target as HTMLInputElement).value;
+					return vnode.context.runValidation(field_value, validator_field);
 				});
+				return true;
 			},
 		}
 	},
 	data() {
 		return {
-			inputFields: [],
+			inputFields: [] as ValidatorField[],
 		};
 	},
 	computed: {
-		formErrors() {
-			let form_errors = {};
+		formErrors(): Record<string, string> {
+			let form_errors: Record<string, string> = {};
 
 			this.inputFields.filter(el => el.has_error && el.show_error)
 				.forEach(el => {
@@ -50,11 +77,10 @@ const validator = {
 		// 	}
 		// 	this.addField(field.id, field.name, binding.value, binding.arg == 'touch');
 		// },
-		addField(fieldId, fieldName = '', formName = '', rules, touch) {
-
+		addField(fieldId: string, rules: string | Record<string, any>, touch: boolean, fieldName?: string, formName?: string): ValidatorField | false {
 			// get the field_name from name or id attribute of the input element
-			let field_name = fieldName || fieldId.replace(/_/g, ' ');
-			if (field_name.includes('.')) field_name = field_name.split('.').slice(-1).pop();
+			let field_name: string = fieldName || fieldId.replace(/_/g, ' ');
+			if (field_name.includes('.')) field_name = field_name.split('.')?.slice(-1)?.pop() || field_name;
 
 			let validation_rules = {};
 			//construct validation_rules object from string format
@@ -74,11 +100,11 @@ const validator = {
 			const already_present_field = this.inputFields.find(el => el.field_id === fieldId);
 			if (already_present_field) {
 				/* eslint-disable-next-line */
-				console.error('Duplicate field found with id ' + field.field_id + '.');
+				console.error('Duplicate field found with id ' + already_present_field.field_id + '.');
 				return false;
 			}
 
-			const new_field = {
+			const new_field: ValidatorField = {
 				'field_id': fieldId,
 				'field_name': field_name,
 				'form_name': '',
@@ -93,30 +119,30 @@ const validator = {
 
 			return new_field;
 		},
-		runValidation(field_value, field) {
+		runValidation(field_value: any, field: ValidatorField): void {
 
 			// loop through the validators array
-			for (const [rule_name, rule_parameter] of Object.entries(field.rules)) {
+			for (const [rule_name, rule_params] of Object.entries(field.rules)) {
 
 				if (!validationRules[rule_name]) {
 					/* eslint-disable-next-line */
-					console.error('Validation rule "' + rule_name + '" not found for field with id #' + field.field_id + '.');
+					console.error('Validation rule "' + rule_name + '" not found.');
 					continue;
 				}
 
 
-				let result = validationRules[rule_name](field_value, rule_parameter);
+				let result = validationRules[rule_name](field_value, rule_params);
 				field['has_error'] = !result;
 
 				if (!result) {
-					field['error_msg'] = validationMessages[rule_name];
+					field['error_msg'] = messageFormatter(rule_name, { 'attribute': field.field_name });
 					field['failed_rule'] = rule_name;
 					// stop the loop
 					break;
 				}
 			}
 		},
-		checkValidation(to_be_validated_fields) {
+		checkValidation(to_be_validated_fields: ValidatorField[]): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				to_be_validated_fields.forEach(el => this.runValidation('', el));
 				let error_present = to_be_validated_fields
@@ -126,36 +152,29 @@ const validator = {
 				resolve(error_present);
 			});
 		},
-		validateForm(FormName = '') {
+		validateForm(FormName?: string): Promise<boolean> {
 			const to_be_validated_fields = this.inputFields
 			// .filter(field => {
 			// 	if (FormName && field.form_name != FormName) return false;
 			// 	return true;
 			// });
-
 			return this.checkValidation(to_be_validated_fields);
 		},
 
-		validateInputs(validate_fields = []) {
+		validateInputs(validate_fields: string[]): Promise<boolean> {
 			const to_be_validated_fields = this.inputFields
 				.filter(el => validate_fields.includes(el.field_id));
 			return this.checkValidation(to_be_validated_fields);
 		},
 
-		validateInput(validate_field = '') {
+		validateInput(validate_field: string): Promise<boolean> {
 			const to_be_validated_fields = this.inputFields
 				.filter(el => el.field_id === validate_field);
 			return this.checkValidation(to_be_validated_fields);
 		},
 
-		addValidationRules(ruleObject) {
+		addValidationRules(ruleObject: Record<string, any>): Record<string, any> {
 			return Object.assign(validationRules, ruleObject);
-		},
-
-		addValidationMessages(msgObject) {
-			return Object.assign(validationMessages, msgObject);
 		},
 	}
 }
-
-export default validator;
