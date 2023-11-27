@@ -7,7 +7,7 @@ npm install vue-nice-validate
 
 ## Usage
 ### Basic Usage
-```
+```js
 import ValidateMixin from 'vue-nice-validate'
 
 export default {
@@ -19,14 +19,14 @@ export default {
 The validation field are searched and validated by their name attribute. If not present it will skip validation for that field. 
 Use formErrors Method with field_name as paramter to get error
 
-```
+```js
 <input
     name="field_name"
     v-validate="'required|max:5'"
 >
-
+```
 or pass object
-
+```js
 <input
     name="field_name"
     v-validate="{required:true,max:5}"
@@ -38,7 +38,7 @@ or pass object
 use validateForm() method to validate all fields.
 It return a promise with a resolved value as true or false.
 use this.form_errors to get all errors.
-```
+```js
 methods:{
     handleSubmit(){
         this.validateForm().then(result=>{
@@ -56,7 +56,7 @@ methods:{
 ### Validate single forms
 
 To validate on only a single form use attribute validationScope.
-```
+```js
 <form validationScope="form_name">
     <input
         name="field_name"
@@ -80,7 +80,7 @@ methods:{
 ### Validate single input
 
 To validate on only a single form use attribute validationScope
-```
+```js
 <form>
     <input
         name="field_name"
@@ -104,7 +104,7 @@ methods:{
 ### Validate multiple inputs
 
 To validate on only a single form use attribute validationScope
-```
+```js
 <form>
     <input
         name="field_name"
@@ -133,7 +133,7 @@ methods:{
 ### Validate components
 
 If v-model or value attribute is not present in component, It will read for attribute validation-value
-```
+```js
 <third-party-component
     name="field_name"
     v-validate="'required'"
@@ -151,7 +151,7 @@ data(){
 ### Manually Add field
 
 If you still struggle with any third party component or have complex requirement just add the field from script section.
-```
+```js
 this.addField(field_name,validation_rules,formName)
 where formName is optional parameter.
 ```
@@ -165,7 +165,7 @@ As this.form_errors is available as data property you can simply add, update or 
 
 Underscores will be automatically removed from field names in error message
 For dynamic input fields use field name and hashtag
-```
+```js
 <input
     :name="'field_name#'+123"
     v-validate="'required'"
@@ -173,48 +173,3 @@ For dynamic input fields use field name and hashtag
 <span class="text-danger">{{ formErrors('field_name#'+123) }}</span>
 ```
 and error will be show as "field name is required."
-
-### Use only number inside input field
-```
-<input
-    :name="'field_name'"
-    @input="onlyNumber"
-    v-validate="'required'"
->
-```
-
-//validate via data
-loginForm:{
-    full_name
-}
-
-registerForm:{
-    full_name
-}
-
-validateData(loginForm);
-watch(this.loginForm){}
-
-validateData(registerForm);
-watch(this.registerForm){}
-
-only one form errors can be watched at one time
-
-if multiple form validate together
-validateData({loginForm:this.loginForm, registerForm:this.registerForm});
-watch(this.formData){}
-
-//validate via html
-<input id="loginForm.full_name">
-
-validateForm('loginForm'){
-    //validate every field starting with 'loginForm'+'.'
-    this.formData = this.loginForm
-}
-
-..how to watch changes to 'loginForm' or every data;
-
-//what if array inputs are there
-customers:[{full_name:''},{full_name:''}]
-<input id="customers.0.full_name">
-validateData(customers);
