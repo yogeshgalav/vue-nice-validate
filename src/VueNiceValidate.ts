@@ -1,16 +1,20 @@
 import validationRules from './validationRules';
 import validationMessages from './validationMessages';
 
-function messageFormatter(ruleName, params, local = 'en') {
+function messageFormatter(ruleName: string, field_name: string, params?: string, local = 'en') {
 	// if (i18n) {
 	//     return i18n.t(ruleName, params);
 	// }
 
 	let str = validationMessages[ruleName];
+	let str_var = {
+		'attribute': field_name,
+		...params?.split(',')
+	}
+
 	//replace sub-string enclosed in {} with params 
-	//params = {'attribute':'field_name','max':'265','min':'3'}
 	str = str.replace(/{[^{}]+}/g, function (match) {
-		return params[match.slice(1, -1)];
+		return str_var[match.slice(1, -1)];
 	});
 	return str;
 }
@@ -135,7 +139,7 @@ export default {
 				field['has_error'] = !result;
 
 				if (!result) {
-					field['error_msg'] = messageFormatter(rule_name, { 'attribute': field.field_name });
+					field['error_msg'] = messageFormatter(rule_name, field.field_name, rule_params.toString());
 					field['failed_rule'] = rule_name;
 					// stop the loop
 					break;
