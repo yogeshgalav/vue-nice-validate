@@ -1,7 +1,8 @@
 import validationRules from './validationRules';
 import validationMessages from './validationMessages';
 import { reactive, watch } from 'vue';
-let customMessageFomatter = null;
+let translator = null;
+
 type ValidatorField = {
 	field_id: string;
 	field_name: string;
@@ -17,13 +18,13 @@ let inputFields = reactive<ValidatorField[]>([]);
 
 let formErrors = reactive<Record<string, string>>({});
 
-
+function setTranslator(t){
+	translator = t;
+}
 function messageFormatter(ruleName: string, msg_params: Record<string, string>, field_name: string = '',local = 'en') {
 	let params = {'attribute':field_name, ...msg_params}
-
-	if (customMessageFomatter) {
-		console.log(customMessageFomatter)
-	    return customMessageFomatter(ruleName, params);
+	if (translator) {
+	    return translator(ruleName, params);
 	}
 
 	let str = validationMessages[ruleName];
@@ -240,16 +241,15 @@ function addValidationRules(ruleObject: Record<string, any>): Record<string, any
 }
 
 export default {
-	customMessageFomatter,
+	setTranslator,
 	inputFields,
 	formErrors,
-	messageFormatter,
 	addField,
 	runValidation,
-	checkInputValidation,
+	checkFormValidation,
 	checkInputsValidation,
+	checkInputValidation,
 	addValidationRules,
 	validateForm,
-	checkFormValidation,
 	validateDirective
 }
