@@ -66,13 +66,13 @@ or pass object
 ```
 ### Get validation errors
 
-use checkFormValidation() method to validate all fields.
+use validateForm() method to validate all fields.
 It return a boolean as true or false.
 use this.$validator.formErrors to get all errors.
 ```
 methods:{
     handleSubmit(){
-		if(this.$validator.checkFormValidation()){
+		if(this.$validator.validateForm()){
 			\\validation successfull
 		}else{
 			\\validation failed
@@ -84,7 +84,7 @@ methods:{
 
 ### Validate single forms
 
-To validate on only a single form use 'name' attribute with form tag and use function checkFormValidation.
+To validate on only a single form use 'name' attribute with form tag and use function validateForm.
 ```
 <form name="form_name">
     <input
@@ -96,7 +96,7 @@ To validate on only a single form use 'name' attribute with form tag and use fun
 
 methods:{
     handleSubmit(){
-		if(this.$validator.checkFormValidation('form_name')){
+		if(this.$validator.validateForm('form_name')){
 			\\validation successfull
 		}else{
 			\\validation failed
@@ -106,7 +106,7 @@ methods:{
 ```
 ### Validate single input
 
-To validate on only a single input use function checkInputValidation
+To validate on only a single input use function validateInput
 ```
 <form>
     <input
@@ -118,7 +118,7 @@ To validate on only a single input use function checkInputValidation
 
 methods:{
     handleSubmit(){
-		if(this.$validator.checkInputValidation('field_id')){
+		if(this.$validator.validateInput('field_id')){
 			\\validation successfull
 		}else{
 			\\validation failed
@@ -128,7 +128,7 @@ methods:{
 ```
 ### Validate multiple inputs
 
-To validate on only a multiple inputs use function checkInputsValidation
+To validate on only a multiple inputs use function validateInputs
 ```
 <form>
     <input
@@ -145,7 +145,7 @@ To validate on only a multiple inputs use function checkInputsValidation
 
 methods:{
     handleSubmit(){
-		if(this.$validator.checkInputsValidation(['field_name','second_field_name'])){
+		if(this.$validator.validateInputs(['field_name','second_field_name'])){
 			\\validation successfull
 		}else{
 			\\validation failed
