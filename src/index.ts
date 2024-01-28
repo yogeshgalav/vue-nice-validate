@@ -6,9 +6,10 @@ import { setTranslator } from './ValidationMessages';
 export default useVueNiceValidate;
 
 export const validatePlugin = {
-	install(app) {
-		console.log('install');
-		setTranslator(app.config.globalProperties.$validationMessage);
+	install(app, options) {
+		if(options.messageFormatter){
+			setTranslator(options.messageFormatter);
+		}
 		// let VueNiceValidate = useVueNiceValidate();
 		// app.directive('validate', VueNiceValidate.validateDirective);
 		// app.config.globalProperties.$validator = VueNiceValidate;
