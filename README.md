@@ -28,210 +28,212 @@ npm install vue-nice-validate@2
 
 ## Usage
 ### Basic Usage
-Use as global plugin
-```
-import { createApp } from 'vue'
-import App from './App.vue'
-import VueNiceValidate from 'vue-nice-validate';
+The VueNiceValidate provide Vue3 composable function `useVueNiceValidate`
+you have to run this function to get tools(Array and functions) to perform validation in your page.
+For basic validation you need to import and use at least 4 entities,
+`validateDirective` for using directive
+`formWatcher` for validating data
+`validateForm` or `validateInputs` or `validateInput` to check if perticular input fields are valid w.r.t data.
+`formErrors` for showing errors in template
 
-const app = createApp(App);
-app.use(VueNiceValidate);
-app.mount('#app');
+##Import and use useVueNiceValidate
+```js
+import useVueNiceValidate from 'vue-nice-validate';
+const {validateDirective, formErrors, formWatcher, validateForm, validationFields} = useVueNiceValidate();
 ```
-In plugin mode you can globally access v-validate directive and this.$validator to access all validation properties.
 
-Or use in perticular component.
-```
-import { validateInputs, validateDirective, fieldErrors } from 'vue-nice-validate';
+##Declare directive
+```js
+const { validateDirective } = useVueNiceValidate();
+//composition API
 const vValidate = validateDirective;
-```
-### Validating form fields
-
-The validation field are searched and validated by their name attribute. If not present it will skip validation for that field. 
-Use formErrors Method with field_name as paramter to get error
-
-```
-<input
-    id="field_id"
-    v-validate="'required|max:5'"
->
-
-or pass object
-
-<input
-    id="field_id"
-    v-validate="{required:true,max:5}"
->
-<span class="text-danger">{{ formErrors['field_name'] }}</span>
-```
-### Get validation errors
-
-use validateForm() method to validate all fields.
-It return a boolean as true or false.
-use this.$validator.formErrors to get all errors.
-```
-methods:{
-    handleSubmit(){
-		if(this.$validator.validateForm()){
-			\\validation successfull
-		}else{
-			\\validation failed
-		}
-    }
-}
-
-```
-
-### Validate single forms
-
-To validate on only a single form use 'name' attribute with form tag and use function validateForm.
-```
-<form name="form_name">
-    <input
-        id="field_id"
-        v-validate="'required'"
-    >
-    <span class="text-danger">{{ formErrors['form_name#field_id'] }}</span>
-</form>
-
-methods:{
-    handleSubmit(){
-		if(this.$validator.validateForm('form_name')){
-			\\validation successfull
-		}else{
-			\\validation failed
-		}
-    }
+//optional api
+export default {
+	...
+	directives: {
+		"validate": validateDirective,
+	}, 
+	...
 }
 ```
+
+##Use directive
+```html
+<input id="email" v-validate="'required|email'" />
+```
+The html element must contain id attribute. This id attribute must contain unique value which should reperesnt variable(reacive property) name. This package take rules from your directive in template and values from your reactive properties, And combine them with help of id attribute.
+so for `let email = ref('')` you can use `<input id="email" />`
+for `let loginForm = reactive({email:''})` you can use `<input id="loginForm.email" />`
+for `let userProfile = reactive({emails:[{email:''}]})` you can use `<input id="userProfile.emails.0.email" />`
+
+##Watch form 
+```js
+import { formWatcher } from useVueNiceValidate();
+//composition API
+...
+onMounted(()=>{
+	formWatcher(loginForm);
+	...
+});
+...
+//optional API
+...
+mounted(){
+	formWatcher(loginForm);
+	...
+}
+...
+```
+Watch form to validate data on any change, this will not add any error to formErrors, It's just required so after you start showing form errors they will change based on validation rule and field value instantly.
+
+##Check validation
+```js
+import { validateForm } from useVueNiceValidate();
+...
+	submit(){
+		if(!validateForm()){
+			//form is invalid
+			return false;
+		}
+		//form is valid
+		//call api
+	}
+...
+```
+validateForm is a function which returns boolean value, it can be used just before calling api, 
+your fields are already checked by formWatcher, the information that any field has error or not is already available prior to checking,
+this functions only checks if your fields has error or not and return boolean instantly.
+This functions also add form errors to formErrors.
+
+##Declare formErrors
+```js
+import { formErrors } from useVueNiceValidate();
+//optional api
+export default {
+	...
+	data() {
+		return {
+			...
+			formErrors: formErrors,
+			...
+		}
+	}, 
+	...
+}
+```
+
+##use formErrors
+```html
+<input id="field_id" v-validate="'required'">
+<span class="text-danger">{{ formErrors['field_id'] }}</span>
+```
+
+###Message Formatter
+If you are using internationalization or wants your custom validation messages to show instead of default ones,
+Then you can use messageFormatter option in validatePlugin
+```js
+import {validatePlugin} from 'vue-nice-validate';
+...
+const messageFormatter = (rule, params)=>{
+	return i18n.global.t(rule.toUpperCase(), params)
+};
+app.use(validatePlugin,{messageFormatter});
+...
+```
+
 ### Validate single input
-
-To validate on only a single input use function validateInput
-```
-<form>
-    <input
-        id="field_id"
-        v-validate="'required'"
-    >
-    <span class="text-danger">{{ formErrors['field_id'] }}</span>
-</form>
-
-methods:{
-    handleSubmit(){
-		if(this.$validator.validateInput('field_id')){
-			\\validation successfull
-		}else{
-			\\validation failed
+To validate on only a single input use function validateInput for checking validation
+```js
+import { validateInput } from useVueNiceValidate();
+...
+	submit(){
+		if(!validateInput('field_id')){
+			//form is invalid
+			return false;
 		}
-    }
-}
+		//form is valid
+		//call api
+	}
+...
 ```
+
 ### Validate multiple inputs
-
-To validate on only a multiple inputs use function validateInputs
-```
-<form>
-    <input
-        id="field_id"
-        v-validate="'required'"
-    >
-    <span class="text-danger">{{ formErrors['field_id'] }}</span>
-    <input
-        id="second_field_id"
-        v-validate="'required'"
-    >
-    <span class="text-danger">{{ formErrors['second_field_id'] }}</span>
-</form>
-
-methods:{
-    handleSubmit(){
-		if(this.$validator.validateInputs(['field_name','second_field_name'])){
-			\\validation successfull
-		}else{
-			\\validation failed
+To validate on multiple inputs use function validateInputs
+```js
+import { validateInputs } from useVueNiceValidate();
+...
+	submit(){
+		if(!validateInputs(['field_id1','field_id2'])){
+			//form is invalid
+			return false;
 		}
-    }
-}
-```
-### Add custom validation rules
-If you want to use your custom made rule, create a function with first parameter as input value and second parameter as array of rule parameters. And return boolean value.
-
-The "setValidationRules" function accepts single parameter as object containing rule functions. Original rule will be replaced with custom, if used with same name. 
-```
-import {setValidationRules} from 'vue-nice-validate';
-let phoneRule = function(value,country){
-    if(value.length===10 && country==='IN') return true;
-    return false;
-}
-setValidationRules({phoneRule});
-```
-You can use your custom rule with same function name inside directive
-```
-<input v-validate="'phoneRule:IN'" value="8003345821">
+		//form is valid
+		//call api
+	}
+...
 ```
 
-### Add custom validation messages
-If you want to use your custom messages, create an object with key as rule name and value as message. This message can have :attribute and :param inside it to be replaced with respective values.
+### Validate multiple forms
+To validate single form if you are using multiple forms in component, 
+You need to pass form name as parameter in validateForm and formWatcher
+You need to mention form name in template and with field ids as well
+```html
+<form>
+	<input id="email" form="loginForm" v-validate="'required'"/>
+	<span class="text-danger">{{ formErrors['loginForm#email'] }}</span>
 
-The "setValidationMessages" function accepts single parameter as object of messages.  Original message will be replaced with custom, if used with same key.
+	<input id="password"  v-validate:loginForm="'required'"/>
+	<span class="text-danger">{{ formErrors['loginForm#password'] }}</span>
+</form>
+<form>
+	<input id="email" form="registerForm" v-validate="'required'"/>
+	<span class="text-danger">{{ formErrors['registerForm#email'] }}</span>
+
+	<input id="password"  v-validate:registerForm="'required'"/>
+	<span class="text-danger">{{ formErrors['registerForm#password'] }}</span>
+</form>
 ```
-import {setValidationMessages} from 'vue-nice-validate';
-let japaneseMsg = {
-    'digits' : ':attribute は :param 桁でなければなりません。'
-}
-setValidationMessages(japaneseMsg);
-```
-
-### Validate components
-
-If v-model or value attribute is not present in component, It will read for attribute validation-value
-```
-<third-party-component
-    name="field_name"
-    v-validate="'required'"
-    :validation-value="custom_value"
->
-<span class="text-danger">{{ formErrors['field_name'] }}</span>
-
-data(){
-    return {
-        custom_value:'',
-    };
-}
-
+```js
+import { formWatcher, validateForm } from useVueNiceValidate();
+//inside mounted
+formWatcher(loginData, 'loginForm');
+formWatcher(registerData, 'registerForm');
+...
+	login(){
+		if(!validateForm('loginForm')){
+			//loginForm is invalid
+			return false;
+		}
+		...
+	}
+	register(){
+		if(!validateForm('registerForm')){
+			//registerForm is invalid
+			return false;
+		}
+		...
+	}
+...
 ```
 ### Manually Add field
-
-If you still struggle with any third party component or have complex requirement just add the field from script section.
+If you still struggle with any third party component or have complex requirement just add the field with addField function.
+```js
+	function addField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string, touch?: boolean): TValidationField | false
 ```
-this.$validator.addField(field_name,validation_rules,formName)
-where formName is optional parameter.
+```js
+import { addField } from useVueNiceValidate();
 ```
 
 ### Manually Manage Errors
+As formErrors is available as reactive property, you can play with it in case you want to add server error or custom errors.
+```
+import { formErrors } from useVueNiceValidate();
+...
+formErrors['email'] = 'This email is already registered. Please Login.';
+...
+```
+//TO DO
+### Validate components with no id attribute
+In most cases vue components pass id attribute or id props, this you can check by inspecting HTML elements in your browser
+but if you have a component with no id atrribute then you can pass it via validation-id or argument
 
-```
-As this.$validator.form_errors is available as data property you can simply add, update or delete error messages by your comfort.
-```
-### Use dynamic input names
-
-Underscores will be automatically removed from field id in error message
-For dynamic input fields use field name attribute
-```
-<input
-    id="'field_id'"
-    :name="'field_name#'+123"
-    v-validate="'required'"
->
-<span class="text-danger">{{ formErrors['field_id'] }}</span>
-```
-and error will be show as "field name is required."
-
-### Use only number inside input field
-```
-<input
-    :name="'field_name'"
-    @input="onlyNumber"
-    v-validate="'required'"
->
-```
