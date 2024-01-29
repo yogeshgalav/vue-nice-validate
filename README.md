@@ -32,14 +32,14 @@ The VueNiceValidate provide Vue3 composable function `useVueNiceValidate`
 you have to run this function to get tools(Array and functions) to perform validation in your page.
 For basic validation you need to import and use at least 4 entities,
 `validateDirective` for using directive
-`formWatcher` or `watchForm` for validating data
+`formWatcher` for validating data
 `validateForm` or `validateInputs` or `validateInput` to check if perticular input fields are valid w.r.t data.
 `formErrors` for showing errors in template
 
 ##Import and use useVueNiceValidate
 ```js
 import useVueNiceValidate from 'vue-nice-validate';
-const {validateDirective, formErrors, watchForm, validateForm, validationFields} = useVueNiceValidate();
+const {validateDirective, formErrors, formWatcher, validateForm, validationFields} = useVueNiceValidate();
 ```
 
 ##Declare directive
@@ -68,20 +68,20 @@ for `let userProfile = reactive({emails:[{email:''}]})` you can use `<input id="
 
 ##Watch form 
 ```js
-//composition API
 import { formWatcher } from useVueNiceValidate();
-formWatcher(loginForm);
-//optional API
-import { watchForm } from useVueNiceValidate();
+//composition API
 ...
-watch:{
-		loginForm: {
-			handler(newValue){
-				watchForm(newValue)
-			}, deep: true
-		}
-		...
-	},
+onMounted(()=>{
+	formWatcher(loginForm);
+	...
+});
+...
+//optional API
+...
+mounted(){
+	formWatcher(loginForm);
+	...
+}
 ...
 ```
 Watch form to validate data on any change, this will not add any error to formErrors, It's just required so after you start showing form errors they will change based on validation rule and field value instantly.
@@ -107,7 +107,7 @@ This functions also add form errors to formErrors.
 
 ##Declare formErrors
 ```js
-import { validateForm } from useVueNiceValidate();
+import { formErrors } from useVueNiceValidate();
 //optional api
 export default {
 	...
@@ -178,36 +178,26 @@ To validate single form if you are using multiple forms in component,
 You need to pass form name as parameter in validateForm and formWatcher
 You need to mention form name in template and with field ids as well
 ```html
-<form name='loginForm'>
-	<input id="loginForm.email" v-validate="'required'"/>
-	<input id="password"  v-validate="'required'"/>
+<form>
+	<input id="email" form="loginForm" v-validate="'required'"/>
+	<span class="text-danger">{{ formErrors['loginForm#email'] }}</span>
+
+	<input id="password"  v-validate:loginForm="'required'"/>
+	<span class="text-danger">{{ formErrors['loginForm#password'] }}</span>
 </form>
-<form name='registerForm'>
-	<input id="registerForm.email" v-validate="'required'"/>
-	<input id="password"  v-validate="'required'"/>
+<form>
+	<input id="email" form="registerForm" v-validate="'required'"/>
+	<span class="text-danger">{{ formErrors['registerForm#email'] }}</span>
+
+	<input id="password"  v-validate:registerForm="'required'"/>
+	<span class="text-danger">{{ formErrors['registerForm#password'] }}</span>
 </form>
 ```
 ```js
-//composition API
 import { formWatcher, validateForm } from useVueNiceValidate();
-formWatcher(loginForm, 'loginForm');
-formWatcher(registerForm, 'registerForm');
-//optional API
-import { watchForm, validateForm } from useVueNiceValidate();
-...
-watch:{
-	loginForm: {
-		handler(newValue){
-			watchForm(newValue, 'loginForm')
-		}, deep: true
-	}
-	registerForm: {
-		handler(newValue){
-			watchForm(newValue, 'registerForm')
-		}, deep: true
-	}
-	...
-},
+//inside mounted
+formWatcher(loginData, 'loginForm');
+formWatcher(registerData, 'registerForm');
 ...
 	login(){
 		if(!validateForm('loginForm')){
@@ -227,11 +217,12 @@ watch:{
 ```
 ### Manually Add field
 If you still struggle with any third party component or have complex requirement just add the field with addField function.
+```js
+	function addField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string, touch?: boolean): TValidationField | false
 ```
+```js
 import { addField } from useVueNiceValidate();
-addField(field_name,validation_rules,formName);
 ```
-where formName is optional parameter.
 
 ### Manually Manage Errors
 As formErrors is available as reactive property, you can play with it in case you want to add server error or custom errors.

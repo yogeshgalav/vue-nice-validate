@@ -19,7 +19,7 @@ export default function useVueNiceValidate() {
 	} = useErrorChecker(validationFields, formErrors);
 
 	const { addField } = useValidationField(validationFields);
-	const { watchForm } = useFormWatcher(validationFields, formErrors);
+	const { watchForm, formWatcher } = useFormWatcher(validationFields, formErrors);
 
 	return {
 		validationFields,
@@ -37,5 +37,6 @@ export default function useVueNiceValidate() {
 		validateForm: checkValidationForForm,
 
 		watchForm,
+		formWatcher,
 	}
 }

@@ -1,7 +1,7 @@
 import {TValidationField} from './types';
 import setFormErrors from './FormErrors';
 
-export default function ErrorChecker(validationFields, formErrors){
+export default function useErrorChecker(validationFields, formErrors){
 
 	function checkValidation(to_be_validated_fields: TValidationField[]): boolean {
 
