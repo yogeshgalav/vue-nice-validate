@@ -32,17 +32,16 @@ The VueNiceValidate provide Vue3 composable function `useVueNiceValidate`
 you have to run this function to get tools(Array and functions) to perform validation in your page.
 For basic validation you need to import and use at least 4 entities,
 `validateDirective` for using directive
-`formWatcher` for validating data
 `validateForm` or `validateInputs` or `validateInput` to check if perticular input fields are valid w.r.t data.
 `formErrors` for showing errors in template
 
-##Import and use useVueNiceValidate
+## Import and use useVueNiceValidate
 ```js
-import useVueNiceValidate from 'vue-nice-validate';
-const {validateDirective, formErrors, formWatcher, validateForm, validationFields} = useVueNiceValidate();
+import {useVueNiceValidate} from 'vue-nice-validate';
+const {validateDirective, formErrors, validateForm, validationFields} = useVueNiceValidate();
 ```
 
-##Declare directive
+## Declare directive
 ```js
 const { validateDirective } = useVueNiceValidate();
 //composition API
@@ -57,7 +56,7 @@ export default {
 }
 ```
 
-##Use directive
+## Use directive
 ```html
 <input id="email" v-validate="'required|email'" />
 ```
@@ -66,32 +65,13 @@ so for `let email = ref('')` you can use `<input id="email" />`
 for `let loginForm = reactive({email:''})` you can use `<input id="loginForm.email" />`
 for `let userProfile = reactive({emails:[{email:''}]})` you can use `<input id="userProfile.emails.0.email" />`
 
-##Watch form 
-```js
-import { formWatcher } from useVueNiceValidate();
-//composition API
-...
-onMounted(()=>{
-	formWatcher(loginForm);
-	...
-});
-...
-//optional API
-...
-mounted(){
-	formWatcher(loginForm);
-	...
-}
-...
-```
-Watch form to validate data on any change, this will not add any error to formErrors, It's just required so after you start showing form errors they will change based on validation rule and field value instantly.
-
-##Check validation
+## Check validation
 ```js
 import { validateForm } from useVueNiceValidate();
 ...
-	submit(){
-		if(!validateForm()){
+	async submit(){
+		let is_form_valid = await validateForm(loginForm); 
+		if(!is_form_valid){
 			//form is invalid
 			return false;
 		}
@@ -105,7 +85,7 @@ your fields are already checked by formWatcher, the information that any field h
 this functions only checks if your fields has error or not and return boolean instantly.
 This functions also add form errors to formErrors.
 
-##Declare formErrors
+## Declare formErrors
 ```js
 import { formErrors } from useVueNiceValidate();
 //optional api
@@ -122,13 +102,13 @@ export default {
 }
 ```
 
-##use formErrors
+## use formErrors
 ```html
 <input id="field_id" v-validate="'required'">
 <span class="text-danger">{{ formErrors['field_id'] }}</span>
 ```
 
-###Message Formatter
+### Message Formatter
 If you are using internationalization or wants your custom validation messages to show instead of default ones,
 Then you can use messageFormatter option in validatePlugin
 ```js
@@ -141,13 +121,18 @@ app.use(validatePlugin,{messageFormatter});
 ...
 ```
 
-### Validate single input
-To validate on only a single input use function validateInput for checking validation
+
+### Validate selected input fields
+To validate on selected input fields you can pass object containing only those fields.
 ```js
-import { validateInput } from useVueNiceValidate();
+import { validateForm } from useVueNiceValidate();
 ...
-	submit(){
-		if(!validateInput('field_id')){
+	async submit(){
+		//composition API
+		let is_form_valid = await validateForm({email,password}); 
+		//optional API
+		let is_form_valid = await validateForm({email:this.email}); 
+		if(!is_form_valid){
 			//form is invalid
 			return false;
 		}
@@ -157,21 +142,6 @@ import { validateInput } from useVueNiceValidate();
 ...
 ```
 
-### Validate multiple inputs
-To validate on multiple inputs use function validateInputs
-```js
-import { validateInputs } from useVueNiceValidate();
-...
-	submit(){
-		if(!validateInputs(['field_id1','field_id2'])){
-			//form is invalid
-			return false;
-		}
-		//form is valid
-		//call api
-	}
-...
-```
 
 ### Validate multiple forms
 To validate single form if you are using multiple forms in component, 
@@ -194,20 +164,17 @@ You need to mention form name in template and with field ids as well
 </form>
 ```
 ```js
-import { formWatcher, validateForm } from useVueNiceValidate();
-//inside mounted
-formWatcher(loginData, 'loginForm');
-formWatcher(registerData, 'registerForm');
+import { validateForm } from useVueNiceValidate();
 ...
-	login(){
-		if(!validateForm('loginForm')){
+	async login(){
+		if(!await validateForm('loginForm')){
 			//loginForm is invalid
 			return false;
 		}
 		...
 	}
-	register(){
-		if(!validateForm('registerForm')){
+	async register(){
+		if(!await validateForm('registerForm')){
 			//registerForm is invalid
 			return false;
 		}
@@ -226,7 +193,7 @@ import { addField } from useVueNiceValidate();
 
 ### Manually Manage Errors
 As formErrors is available as reactive property, you can play with it in case you want to add server error or custom errors.
-```
+```js
 import { formErrors } from useVueNiceValidate();
 ...
 formErrors['email'] = 'This email is already registered. Please Login.';

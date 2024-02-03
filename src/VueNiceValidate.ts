@@ -1,25 +1,19 @@
 import { reactive } from 'vue';
 import { TValidationField } from './types';
 import useDirective from './Directive';
-import useErrorChecker from './ErrorChecker';
-import useValidator from './Validator';
+import useValidator from './FieldValidator';
 import useValidationField from './ValidationField';
-import useFormWatcher from './FormWatcher';
+import useFormValidator from './FormValidator';
 
 export default function useVueNiceValidate() {
-	let validationFields = reactive<TValidationField[]>([]);
-	let formErrors = reactive<Record<string, string>>({});
+	const validationFields = reactive<TValidationField[]>([]);
+	const formErrors = reactive<Record<string, string>>({});
 
 	const { validateDirective } = useDirective(validationFields);
-	const { runValidation, addValidationRules } = useValidator();
-	const { 
-		checkValidationForForm,
-		checkValidationForMultipleInputs,
-		checkValidationForSingleInput 
-	} = useErrorChecker(validationFields, formErrors);
+	const { addValidationRules } = useValidator(formErrors);
 
 	const { addField } = useValidationField(validationFields);
-	const { watchForm, formWatcher } = useFormWatcher(validationFields, formErrors);
+	const { validateForm } = useFormValidator(validationFields, formErrors);
 
 	return {
 		validationFields,
@@ -29,14 +23,8 @@ export default function useVueNiceValidate() {
 
 		addField,
 
-		runValidation,
 		addValidationRules,
 
-		validateInputs: checkValidationForMultipleInputs,
-		validateInput: checkValidationForSingleInput,
-		validateForm: checkValidationForForm,
-
-		watchForm,
-		formWatcher,
+		validateForm,
 	}
 }
