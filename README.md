@@ -80,10 +80,9 @@ import { validateForm } from useVueNiceValidate();
 	}
 ...
 ```
-validateForm is a function which returns boolean value, it can be used just before calling api, 
-your fields are already checked by formWatcher, the information that any field has error or not is already available prior to checking,
-this functions only checks if your fields has error or not and return boolean instantly.
-This functions also add form errors to formErrors.
+validateForm is a promise which resolves with boolean result, it can be used just before calling api,
+Or in 'onMounted' if you want to start validationg form and show errors on pageLoad
+This functions will add respective field errors to formErrors reactive array.
 
 ## Declare formErrors
 ```js
@@ -110,14 +109,14 @@ export default {
 
 ### Message Formatter
 If you are using internationalization or wants your custom validation messages to show instead of default ones,
-Then you can use messageFormatter option in validatePlugin
+Then you can use messageFormatter option in ValidatePlugin
 ```js
-import {validatePlugin} from 'vue-nice-validate';
+import {ValidatePlugin} from 'vue-nice-validate';
 ...
 const messageFormatter = (rule, params)=>{
 	return i18n.global.t(rule.toUpperCase(), params)
 };
-app.use(validatePlugin,{messageFormatter});
+app.use(ValidatePlugin,{messageFormatter});
 ...
 ```
 
@@ -199,8 +198,9 @@ import { formErrors } from useVueNiceValidate();
 formErrors['email'] = 'This email is already registered. Please Login.';
 ...
 ```
-//TO DO
+
 ### Validate components with no id attribute
 In most cases vue components pass id attribute or id props, this you can check by inspecting HTML elements in your browser
-but if you have a component with no id atrribute then you can pass it via validation-id or argument
+but if you have a component with no id atrribute then you can pass it via validate-id prop.
+If both are not present you will get console error.
 

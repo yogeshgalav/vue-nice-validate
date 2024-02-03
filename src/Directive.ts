@@ -1,7 +1,8 @@
 import useValidationField from './ValidationField';
 import { DirectiveBinding, VNode } from 'vue'
+import { TValidationField } from './types';
 
-export default function useDirective(validationFields){
+export default function useDirective(validationFields: TValidationField[]){
 
 	const {addField} = useValidationField(validationFields);
 	// register a custom directive called v-validate
@@ -11,14 +12,14 @@ export default function useDirective(validationFields){
 			const field_id = getFieldId(vnode);
 			if (!field_id) {
 				/* eslint-disable-next-line */
-				console.error('Id attribute not found for field:', vnode);
+				console.error('id or validate-id attribute not found for field:', vnode.el);
 				return false;
 			}
 			const field_name = getFieldName(vnode.props?.name);
 			const form_name = getFormName(vnode.props?.form, binding.arg);
-			const touch = Boolean(binding.modifiers?.touch);
+
 			//add field to input fields bag
-			const validator_field = addField(field_id, binding.value, field_name, form_name, touch);
+			const validator_field = addField(field_id, binding.value, field_name, form_name);
 			if(validator_field === false){
 				return false;
 			}
@@ -34,6 +35,9 @@ export default function useDirective(validationFields){
 	function getFieldId(vnode: VNode){
 		if(vnode.props?.id){
 			return vnode.props.id;
+		}
+		if(vnode.props && vnode.props['validate-id']){
+			return vnode.props['validate-id'];
 		}
 		return null;
 	}
