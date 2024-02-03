@@ -5,7 +5,7 @@ export function setTranslator(t) {
 	translator = t;
 }
 export function messageFormatter(ruleName: string, msg_params: Record<string, string>, field_name = '') {
-	const params = { 'attribute': field_name, ...msg_params }
+	const params:Record<string, string> = { 'attribute': field_name, ...msg_params }
 	if (translator) {
 		return translator(ruleName, params);
 	}

@@ -1,5 +1,5 @@
 import { TValidationField } from './types';
-import { messageFormatter } from './ValidationMessages';
+import { messageFormatter } from './ValidationMessage';
 import validationRules from './ValidationRules';
 
 export default function useFieldValidator(formErrors: Record<string, string>) {

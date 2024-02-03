@@ -1,11 +1,9 @@
-import useVueNiceValidate from "./VueNiceValidate";
-import { setTranslator } from './ValidationMessages';
-// import ShowErrors from "./ShowErrors.vue";
-// const { ErrorChecker, validateDirective, ValidationField, FormErrors} = useVueNiceValidate();
+import useVueNiceValidateFunction from "./VueNiceValidate";
+import { setTranslator } from './ValidationMessage';
 
-export default useVueNiceValidate;
+export const useVueNiceValidate = useVueNiceValidateFunction;
 
-export const validatePlugin = {
+export const ValidatePlugin = {
 	install(app, options) {
 		if(options.messageFormatter){
 			setTranslator(options.messageFormatter);

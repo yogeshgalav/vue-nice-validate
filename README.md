@@ -37,7 +37,7 @@ For basic validation you need to import and use at least 4 entities,
 
 ## Import and use useVueNiceValidate
 ```js
-import useVueNiceValidate from 'vue-nice-validate';
+import {useVueNiceValidate} from 'vue-nice-validate';
 const {validateDirective, formErrors, validateForm, validationFields} = useVueNiceValidate();
 ```
 
@@ -129,7 +129,7 @@ import { validateForm } from useVueNiceValidate();
 ...
 	async submit(){
 		//composition API
-		let is_form_valid = await validateForm({email}); 
+		let is_form_valid = await validateForm({email,password}); 
 		//optional API
 		let is_form_valid = await validateForm({email:this.email}); 
 		if(!is_form_valid){
@@ -193,7 +193,7 @@ import { addField } from useVueNiceValidate();
 
 ### Manually Manage Errors
 As formErrors is available as reactive property, you can play with it in case you want to add server error or custom errors.
-```
+```js
 import { formErrors } from useVueNiceValidate();
 ...
 formErrors['email'] = 'This email is already registered. Please Login.';
