@@ -15,7 +15,7 @@ export default function useDirective(validationFields: TValidationField[]){
 				console.error('id or validate-id attribute not found for field:', vnode.el);
 				return false;
 			}
-			const field_name = getFieldName(vnode.props?.name);
+			const field_name = getFieldName(vnode);
 			const form_name = getFormName(vnode.props?.form, binding.arg);
 
 			//add field to input fields bag
@@ -41,8 +41,13 @@ export default function useDirective(validationFields: TValidationField[]){
 		}
 		return null;
 	}
-	function getFieldName(name?:string){
-		if(name) return name;
+	function getFieldName(vnode: VNode){
+		if(vnode.props?.name){
+			return vnode.props.name;
+		}
+		if(vnode.props && vnode.props['validate-name']){
+			return vnode.props['validate-name'];
+		}		
 		return '';
 	}
 	function getFormName(form?:string, arg?:string){
