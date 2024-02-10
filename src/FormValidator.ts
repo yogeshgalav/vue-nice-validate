@@ -1,9 +1,9 @@
 import useFieldValidator from './FieldValidator';
 import { watch, isRef } from 'vue';
-import { TValidationField } from './types';
+import { TValidationField, TValidationRules} from './types';
 
-export default function useFormValidator(validationFields: TValidationField[], formErrors){
-	const { fieldValidator } = useFieldValidator(formErrors);
+export default function useFormValidator(validationFields: TValidationField[], formErrors: Record<string, string>, validationRules:TValidationRules){
+	const { fieldValidator } = useFieldValidator(formErrors, validationRules);
 
 	function validateForm(data: object, form_name=''){
 
@@ -44,14 +44,14 @@ export default function useFormValidator(validationFields: TValidationField[], f
 			//if field id contains dot notaion for nested object
 			const nested_object_keys:Array<string> = field.field_id.split('.');
 			// if first key is equal to form name
-			if(nested_object_keys[0]===form_name){
-				nested_object_keys.shift();
-			}
-			if(nested_object_keys.length === 1){
-				field_value = getValue(data[nested_object_keys[0]]);
-				data_valid_promise = fieldValidator(field, field_value);
-				return;
-			}
+			// if(nested_object_keys[0]===form_name){
+			// 	nested_object_keys.shift();
+			// }
+			// if(nested_object_keys.length === 1){
+			// 	field_value = getValue(data[nested_object_keys[0]]);
+			// 	data_valid_promise = fieldValidator(field, field_value);
+			// 	return;
+			// }
 			field_value = findNestedFieldValue(data, nested_object_keys);
 			data_valid_promise = fieldValidator(field, field_value);
 			return;	

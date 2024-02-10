@@ -165,15 +165,17 @@ You need to mention form name in template and with field ids as well
 ```js
 import { validateForm } from useVueNiceValidate();
 ...
+	let loginForm = reactive({email,password});
 	async login(){
-		if(!await validateForm('loginForm')){
+		if(!await validateForm(loginForm, 'loginForm')){
 			//loginForm is invalid
 			return false;
 		}
 		...
 	}
+	let registerForm = reactive({email,password});
 	async register(){
-		if(!await validateForm('registerForm')){
+		if(!await validateForm(registerForm, 'registerForm')){
 			//registerForm is invalid
 			return false;
 		}
