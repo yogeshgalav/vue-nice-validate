@@ -5,7 +5,7 @@ import { TValidationField, TValidationRules} from './types';
 export default function useFormValidator(validationFields: TValidationField[], formErrors: Record<string, string>, validationRules:TValidationRules){
 	const { fieldValidator } = useFieldValidator(formErrors, validationRules);
 
-	function validateForm(data: object, form_name=''){
+	function validateForm(data: Record<string, any>, form_name: string =''){
 
 		const validatePromise = new Promise<boolean>((resolve, reject) => {
 			let data_valid_promise = new Promise<boolean>((resolve)=>resolve(false));
@@ -24,7 +24,7 @@ export default function useFormValidator(validationFields: TValidationField[], f
 		return validatePromise;
 	}
 
-	function validateData(data: object, form_name:string ='') {
+	function validateData(data: Record<string, any>, form_name:string ='') {
 		let data_valid_promise = new Promise<boolean>((resolve)=>resolve(false));
 		const form_fields = validationFields.filter(el => el.form_name === form_name);
 
