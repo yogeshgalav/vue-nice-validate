@@ -24,7 +24,7 @@ export default function useFieldValidator(formErrors: Record<string, string>, va
 				continue;
 			}
 
-			let result = false;
+			let result = true;
 			if(typeof rule_params === 'boolean' && rule_params == true){
 				result = ruleFunction(field_value);
 			} else if (typeof rule_params === 'object' && Object.keys(rule_params).length==1) {

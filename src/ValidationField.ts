@@ -62,6 +62,9 @@ export default function useValidationFields(validationFields: TValidationField[]
 		if (typeof rule_params === "function"){
 			return false;
 		}
+		if (typeof rule_params === "undefined"){
+			return true;
+		}
 		if (typeof rule_params === "boolean"){
 			return rule_params;
 		}

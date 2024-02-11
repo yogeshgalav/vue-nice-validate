@@ -5,18 +5,19 @@
   "main": "src/index.js",
   "bin": "src/index.js",
   "homepage": "https://github.com/yogeshgalav/vue-nice-validate",
-  "description": "Vue validation library in form of mixin.",
+  "description": "Vue validation library with directive and data based approch.",
   "keywords": [
     "vue nice validate",
     "vue validate",
-    "v-validate",
-    "multi form validation",
-    "dynamic input field validation",
-    "form mixin"
+    "vue3 validate",
+    "v-validate"
   ],
   "author": "Yogesh Galav <mr.yogesh.galav@gmail.com> (https://github.com/yogeshgalav/)",
   "private": false,
   "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
@@ -27,7 +28,8 @@
     "commit-message": "npm run commitlint -e -V",
     "semantic-release:local": "npm run build && semantic-release --no-ci",
     "semantic-release": "semantic-release",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docs:preview": "vitepress preview docs"
   },
   "repository": {
     "type": "git",
@@ -61,6 +63,7 @@
     "semantic-release": "^22.0.7",
     "typescript": "^5.3.3",
     "vite": "^2.5.4",
+    "vitepress": "^1.0.0-rc.35",
     "vue-eslint-parser": "^9.4.2",
     "vue-tsc": "^1.8.5"
   },
