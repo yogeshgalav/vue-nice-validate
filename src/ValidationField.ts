@@ -1,11 +1,20 @@
-import { TValidationField } from './types';
+import { TRuleParam, TValidationField} from './types';
 
 export default function useValidationFields(validationFields: TValidationField[]){
 
-	function addField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string): TValidationField | false{
-		// get the field_name from name or id attribute of the input element
-		let field_name: string = fieldName || fieldId.replace(/_/g, ' ');
-		if (field_name.includes('.')) field_name = field_name.split('.')?.slice(-1)?.pop() || field_name;
+	function updateField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string): TValidationField | false{
+
+		const validation_rules = createRuleObject(rules);
+
+		const already_present_field = validationFields.find(el => el.field_id === fieldId && el.form_name === formName);
+		if(!already_present_field){
+			return false;
+		}
+		already_present_field['rules'] = validation_rules;
+
+		return already_present_field;
+	}
+	function addField(fieldId: string, rules: string | Record<string, any>, fieldName: string, formName?: string): TValidationField | false{
 
 		const validation_rules = createRuleObject(rules);
 
@@ -18,7 +27,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 		const new_field: TValidationField = {
 			'field_id': fieldId,
-			'field_name': field_name,
+			'field_name': fieldName,
 			'form_name': formName || '',
 			'rules': validation_rules,
 			'has_error': false,
@@ -34,7 +43,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 	//In: 'required|max:5', out:{required:true, max: {param1:'5'}}
 	//In: {required:true, max:5}, out:{required:true, max: {param1:'5'}}
 	function createRuleObject(rules:string|Record<string, any>){
-		let validation_rules = {};
+		let validation_rules:Record<string, TRuleParam> = {};
 
 		if (typeof rules === "string"){
 			//get all rules seprated by | and loop over to convert them 
@@ -55,25 +64,43 @@ export default function useValidationFields(validationFields: TValidationField[]
 	
 	//In: false, out:false
 	//In: {param1:foo, param2:bar}, out:{param1:foo, param2:bar}
-	//In: 5,6, out:{param1:5, param2:6}
-	function formatRuleParams(rule_params: any): boolean|Record<string, string>{
+	//In: 5,6 out:{param1:5, param2:6}
+	//In: [foo, bar] out:{param1:foo, param2:bar}
+	function formatRuleParams(rule_params: any): TRuleParam{
 
-		if (typeof rule_params === "boolean" || typeof rule_params === "object"){
+		if (typeof rule_params === "function"){
+			return false;
+		}
+		if (typeof rule_params === "undefined"){
+			return true;
+		}
+		if (typeof rule_params === "boolean"){
 			return rule_params;
 		}
 
+		const final_params:Record<string, any> = {};
+
 		if (typeof rule_params === "string"){
-			const final_params = {};
 			rule_params.split(',').forEach((el,index)=>{
 				final_params['param'+(index+1)] = el;
 			});
-			return final_params;	
+		}
+		if (Array.isArray(rule_params)){
+			rule_params.forEach((el,index)=>{
+				final_params['param'+(index+1)] = el;
+			});
+		}
+		if (typeof rule_params === "object" && rule_params!==null){
+			Object.keys(rule_params).forEach((el,index)=>{
+				final_params['param'+(index+1)] = rule_params[el];
+			});
 		}
 
-		return true;
+		return final_params;	
 	}
 
 	return {
-		addField
+		addField,
+		updateField
 	}
 }

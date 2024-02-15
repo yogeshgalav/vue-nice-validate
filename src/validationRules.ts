@@ -1,15 +1,11 @@
-type RuleFunctions = Record<string, (...args: any[]) => boolean>;
-
-// function addValidationRules(ruleObject: Record<string, Function>): Record<string, Function> {
-// 	return Object.assign(validationRules, ruleObject);
-// }
+import { TValidationRules} from './types';
 
 function getExtension(filename:string) {
 	const parts = filename.split('.');
 	return parts[parts.length - 1];
 }
 
-const validationRules: RuleFunctions = {
+const validationRules: TValidationRules = {
 	required(value) {
 		if (value && value.toString().trim()) return true;
 		return false;
@@ -145,4 +141,29 @@ const validationRules: RuleFunctions = {
 		return false;
 	}
 };
-export default validationRules;
+
+export default function useValidationRules(){
+	
+	function addValidationRules(ruleObject: TValidationRules): boolean {
+		for (const key of Object.keys(ruleObject)){
+			if(typeof ruleObject[key] !== 'function'){
+			/* eslint-disable-next-line */
+			console.error('Validation rule: '+key+' must be a function.');
+				return false;
+			}
+			if(ruleObject[key].length>2){
+				/* eslint-disable-next-line */
+				console.error('Validation rule: '+key+' can have atmost 2 arguments.');
+				return false;
+			}
+			validationRules[key] = ruleObject[key]; 
+		}
+
+		return true;
+	}
+
+	return {
+		validationRules,
+		addValidationRules
+	}
+}

@@ -8,3 +8,6 @@ export type TValidationField = {
   error_msg: string;
   failed_rule: string;
 }
+
+export type TValidationRules = Record<string, (...args: any[]) => boolean>;
+export type TRuleParam = boolean|Record<string, string>;
