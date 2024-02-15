@@ -4,11 +4,30 @@ import { TValidationField } from './types';
 
 export default function useDirective(validationFields: TValidationField[]){
 
-	const {addField} = useValidationField(validationFields);
+	const {addField, updateField} = useValidationField(validationFields);
 	// register a custom directive called v-validate
 	const validateDirective = {
-		bind(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): boolean {
+		updated(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): boolean {
+			
+			if(!vnode.dirs?.length){
+				return false;
+			}
+			const validateDir = vnode.dirs.find(el=>el.value == binding.value);
+			if(JSON.stringify(validateDir?.value) === JSON.stringify(validateDir?.oldValue)){
+				return false;
+			}
+			const field_id = getFieldId(vnode);
+			if (!field_id) {
+				return false;
+			}
+			const field_name = getFieldName(vnode);
+			const form_name = getFormName(vnode.props?.form, binding.arg);
+			const validator_field = updateField(field_id, binding.value, field_name, form_name);
 
+			return validator_field ? true : false;
+		},
+
+		mounted(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): boolean {
 			const field_id = getFieldId(vnode);
 			if (!field_id) {
 				/* eslint-disable-next-line */
@@ -20,15 +39,8 @@ export default function useDirective(validationFields: TValidationField[]){
 
 			//add field to input fields bag
 			const validator_field = addField(field_id, binding.value, field_name, form_name);
-			if(validator_field === false){
-				return false;
-			}
 			
-			// field.addEventListener('input', function (event) {
-			// 	let field_value = (event.target as HTMLInputElement)?.value;
-			// 	return runValidation(validator_field, field_value);
-			// });
-			return true;
+			return validator_field ? true : false;
 		},
 	}
 
@@ -47,7 +59,12 @@ export default function useDirective(validationFields: TValidationField[]){
 		}
 		if(vnode.props && vnode.props['validate-name']){
 			return vnode.props['validate-name'];
-		}		
+		}
+		if(vnode.props?.id){
+			let field_name = vnode.props.id.replace(/_/g, ' ');
+			if (field_name.includes('.')) field_name = field_name.split('.')?.slice(-1)?.pop() || field_name;
+			return field_name;
+		}	
 		return '';
 	}
 	function getFormName(form?:string, arg?:string){

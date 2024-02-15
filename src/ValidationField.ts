@@ -2,10 +2,19 @@ import { TRuleParam, TValidationField} from './types';
 
 export default function useValidationFields(validationFields: TValidationField[]){
 
-	function addField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string): TValidationField | false{
-		// get the field_name from name or id attribute of the input element
-		let field_name: string = fieldName || fieldId.replace(/_/g, ' ');
-		if (field_name.includes('.')) field_name = field_name.split('.')?.slice(-1)?.pop() || field_name;
+	function updateField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string): TValidationField | false{
+
+		const validation_rules = createRuleObject(rules);
+
+		const already_present_field = validationFields.find(el => el.field_id === fieldId && el.form_name === formName);
+		if(!already_present_field){
+			return false;
+		}
+		already_present_field['rules'] = validation_rules;
+
+		return already_present_field;
+	}
+	function addField(fieldId: string, rules: string | Record<string, any>, fieldName: string, formName?: string): TValidationField | false{
 
 		const validation_rules = createRuleObject(rules);
 
@@ -18,7 +27,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 		const new_field: TValidationField = {
 			'field_id': fieldId,
-			'field_name': field_name,
+			'field_name': fieldName,
 			'form_name': formName || '',
 			'rules': validation_rules,
 			'has_error': false,
@@ -91,6 +100,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 	}
 
 	return {
-		addField
+		addField,
+		updateField
 	}
 }
