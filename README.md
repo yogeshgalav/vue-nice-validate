@@ -128,9 +128,9 @@ import { validateForm } from useVueNiceValidate();
 ...
 	async submit(){
 		//composition API
-		let is_form_valid = await validateForm({email,password}); 
+		let is_form_valid = await validateForm( ()=>({email,password}) ); 
 		//optional API
-		let is_form_valid = await validateForm({email:this.email}); 
+		let is_form_valid = await validateForm( ()=>({email:this.email}) ); 
 		if(!is_form_valid){
 			//form is invalid
 			return false;
