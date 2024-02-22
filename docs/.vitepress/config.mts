@@ -23,6 +23,18 @@ export default defineConfig({
 			text: 'Getting Started', 
 			link: '/guide/getting-started',
 		  },
+		  { 
+			text: 'Syntax', 
+			link: '/guide/syntax',
+		  },
+		  { 
+			text: 'Displaying Errors', 
+			link: '/guide/displaying-errors',
+		  },
+		  { 
+			text: 'Error Messages', 
+			link: '/guide/error-messages',
+		  },
         ]
       }
     ],

@@ -67,7 +67,7 @@ for `let userProfile = reactive({emails:[{email:''}]})` you can use `<input id="
 
 ## Check validation
 ```js
-import { validateForm } from useVueNiceValidate();
+const { validateForm } = useVueNiceValidate();
 ...
 	async submit(){
 		let is_form_valid = await validateForm(loginForm); 
@@ -86,7 +86,7 @@ This functions will add respective field errors to formErrors reactive array.
 
 ## Declare formErrors
 ```js
-import { formErrors } from useVueNiceValidate();
+const { formErrors } = useVueNiceValidate();
 //optional api
 export default {
 	...
@@ -124,7 +124,7 @@ app.use(ValidatePlugin,{messageFormatter});
 ### Validate selected input fields
 To validate on selected input fields you can pass object containing only those fields.
 ```js
-import { validateForm } from useVueNiceValidate();
+const { validateForm } = useVueNiceValidate();
 ...
 	async submit(){
 		//composition API
@@ -163,7 +163,7 @@ You need to mention form name in template and with field ids as well
 </form>
 ```
 ```js
-import { validateForm } from useVueNiceValidate();
+const { validateForm } = useVueNiceValidate();
 ...
 	let loginForm = reactive({email,password});
 	async login(){
@@ -183,19 +183,19 @@ import { validateForm } from useVueNiceValidate();
 	}
 ...
 ```
-### Manually Add field
-If you still struggle with any third party component or have complex requirement just add the field with addField function.
+### Manually Create field
+If you still struggle with any third party component or have complex requirement just create the virtual field by using createField function.
 ```js
-	function addField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string, touch?: boolean): TValidationField | false
+	function createField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string, touch?: boolean): TValidationField | false
 ```
 ```js
-import { addField } from useVueNiceValidate();
+const { createField } = useVueNiceValidate();
 ```
 
 ### Manually Manage Errors
 As formErrors is available as reactive property, you can play with it in case you want to add server error or custom errors.
 ```js
-import { formErrors } from useVueNiceValidate();
+const { formErrors } = useVueNiceValidate();
 ...
 formErrors['email'] = 'This email is already registered. Please Login.';
 ...

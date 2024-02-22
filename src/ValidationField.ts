@@ -14,7 +14,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 		return already_present_field;
 	}
-	function addField(fieldId: string, rules: string | Record<string, any>, fieldName: string, formName?: string): TValidationField | false{
+	function addField(fieldId: string, rules: string | Record<string, any>, fieldName: string, formName?: string, all: boolean = false): TValidationField | false{
 
 		const validation_rules = createRuleObject(rules);
 
@@ -31,8 +31,8 @@ export default function useValidationFields(validationFields: TValidationField[]
 			'form_name': formName || '',
 			'rules': validation_rules,
 			'has_error': false,
-			'error_msg': '',
-			'failed_rule': '',
+			'errors': {},
+			'validate_all_rules': all,
 		};
 
 		validationFields.push(new_field);

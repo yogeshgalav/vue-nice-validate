@@ -38,7 +38,7 @@ export default function useDirective(validationFields: TValidationField[]){
 			const form_name = getFormName(vnode.props?.form, binding.arg);
 
 			//add field to input fields bag
-			const validator_field = addField(field_id, binding.value, field_name, form_name);
+			const validator_field = addField(field_id, binding.value, field_name, form_name, !!binding.modifiers.all);
 			
 			return validator_field ? true : false;
 		},
