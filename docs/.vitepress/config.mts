@@ -35,6 +35,10 @@ export default defineConfig({
 			text: 'Error Messages', 
 			link: '/guide/error-messages',
 		  },
+		  { 
+			text: 'Validation Rules', 
+			link: '/guide/validation-rules',
+		  },
         ]
       }
     ],
