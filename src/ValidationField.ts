@@ -2,7 +2,17 @@ import { TRuleParam, TValidationField} from './types';
 
 export default function useValidationFields(validationFields: TValidationField[]){
 
-	function updateField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string): TValidationField | false{
+	function deleteField(fieldId: string, formName?: string): boolean{
+
+		const field_index = validationFields.findIndex(el => el.field_id === fieldId && el.form_name === formName);
+		if(field_index == -1){
+			return false;
+		}
+		delete validationFields[field_index];
+
+		return true;
+	}
+	function updateField(fieldId: string, rules: string | Record<string, any>, formName?: string): TValidationField | false{
 
 		const validation_rules = createRuleObject(rules);
 
@@ -101,6 +111,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 	return {
 		addField,
-		updateField
+		updateField,
+		deleteField
 	}
 }

@@ -19,7 +19,7 @@ export function setTranslator(t:TranslatorFunction) {
 export function getValidationMessage(rule_name: string, msg_params: Record<string, string>, field_name:string, field_id:string) {
 	const params:Record<string, string> = { 'attribute': field_name, ...msg_params }
 	let message_rule_name = rule_name;
-	if(customMsgs[field_id][rule_name]){
+	if(customMsgs && customMsgs[field_id] && customMsgs[field_id][rule_name]){
 		message_rule_name = customMsgs[field_id][rule_name];
 	}
 

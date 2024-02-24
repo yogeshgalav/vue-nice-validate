@@ -10,7 +10,7 @@ export default function useVueNiceValidate() {
 	const validationFields = reactive<TValidationField[]>([]);
 	const formErrors = reactive<TFormErrors>({});
 
-	const { validateDirective } = useDirective(validationFields);
+	const { vValidate } = useDirective(validationFields);
 	const {validationRules, addValidationRules} = useValidationRules();
 
 	const { addField } = useValidationField(validationFields);
@@ -20,7 +20,7 @@ export default function useVueNiceValidate() {
 		validationFields,
 		formErrors,
 
-		validateDirective,
+		vValidate, 
 
 		addField,
 

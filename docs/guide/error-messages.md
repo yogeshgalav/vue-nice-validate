@@ -36,7 +36,7 @@ If you are using i18n then your key value pair may look like:
 'between'=>'The field with name {attribute} is not between {param1} and {param2}'
 ```
 
-## Custom error for selected fields
+## Field-specific Custom Messages
 if you want to show some custom message for selected fields, then you can use addValidationMessage function which accepts the following format:
 ```js
 addValidationMessage({
