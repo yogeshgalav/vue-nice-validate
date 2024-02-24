@@ -9,7 +9,7 @@ export const ValidatePlugin = {
 			setTranslator(options.messageFormatter);
 		}
 		// let VueNiceValidate = useVueNiceValidate();
-		// app.directive('validate', VueNiceValidate.validateDirective);
+		// app.directive('validate', VueNiceValidate.vValidate);
 		// app.config.globalProperties.$validator = VueNiceValidate;
 	}
 }

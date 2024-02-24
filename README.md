@@ -31,26 +31,26 @@ npm install vue-nice-validate@2
 The VueNiceValidate provide Vue3 composable function `useVueNiceValidate`
 you have to run this function to get tools(Array and functions) to perform validation in your page.
 For basic validation you need to import and use at least 4 entities,
-`validateDirective` for using directive
+`vValidate` for using directive
 `validateForm` or `validateInputs` or `validateInput` to check if perticular input fields are valid w.r.t data.
 `formErrors` for showing errors in template
 
 ## Import and use useVueNiceValidate
 ```js
 import {useVueNiceValidate} from 'vue-nice-validate';
-const {validateDirective, formErrors, validateForm, validationFields} = useVueNiceValidate();
+const {vValidate, formErrors, validateForm, validationFields} = useVueNiceValidate();
 ```
 
 ## Declare directive
 ```js
-const { validateDirective } = useVueNiceValidate();
+const { vValidate } = useVueNiceValidate();
 //composition API
-const vValidate = validateDirective;
+const vValidate = vValidate;
 //optional api
 export default {
 	...
 	directives: {
-		"validate": validateDirective,
+		"validate": vValidate,
 	}, 
 	...
 }
