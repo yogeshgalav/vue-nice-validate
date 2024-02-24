@@ -44,8 +44,7 @@ const {vValidate, formErrors, validateForm, validationFields} = useVueNiceValida
 ## Declare directive
 ```js
 const { vValidate } = useVueNiceValidate();
-//composition API
-const vValidate = vValidate;
+
 //optional api
 export default {
 	...

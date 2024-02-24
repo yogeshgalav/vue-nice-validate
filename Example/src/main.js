@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import './index.css'
+
 import { ValidatePlugin } from 'vue-nice-validate';
 import { createI18n } from 'vue-i18n';
 import en from "./lang/en.json";
