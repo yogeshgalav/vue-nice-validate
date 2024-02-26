@@ -1,15 +1,16 @@
 import { reactive } from 'vue';
-import { TValidationField } from './types';
+import { TValidationField, TFormErrors } from './types';
 import useDirective from './Directive';
 import useValidationField from './ValidationField';
 import useFormValidator from './FormValidator';
 import useValidationRules from './ValidationRules';
+import { addValidationMessages } from './ValidationMessage';
 
 export default function useVueNiceValidate() {
 	const validationFields = reactive<TValidationField[]>([]);
-	const formErrors = reactive<Record<string, string>>({});
+	const formErrors = reactive<TFormErrors>({});
 
-	const { validateDirective } = useDirective(validationFields);
+	const { vValidate } = useDirective(validationFields);
 	const {validationRules, addValidationRules} = useValidationRules();
 
 	const { addField } = useValidationField(validationFields);
@@ -19,12 +20,14 @@ export default function useVueNiceValidate() {
 		validationFields,
 		formErrors,
 
-		validateDirective,
+		vValidate, 
 
 		addField,
 
 		addValidationRules,
 
 		validateForm,
+
+		addValidationMessages
 	}
 }

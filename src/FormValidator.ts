@@ -1,8 +1,8 @@
 import useFieldValidator from './FieldValidator';
 import { watch, toValue } from 'vue';
-import { TValidationField, TValidationRules} from './types';
+import { TValidationField, TValidationRules, TFormErrors} from './types';
 
-export default function useFormValidator(validationFields: TValidationField[], formErrors: Record<string, string>, validationRules:TValidationRules){
+export default function useFormValidator(validationFields: TValidationField[], formErrors: TFormErrors, validationRules:TValidationRules){
 	const { fieldValidator } = useFieldValidator(formErrors, validationRules);
 
 	function validateForm(data: Record<string, any>, form_name=''){
@@ -15,7 +15,7 @@ export default function useFormValidator(validationFields: TValidationField[], f
 			}
 			data_valid_promise.then(e=>resolve(e)).catch(e=>reject(e));
 		});
-		// Object.keys(data).forEach(el=>{data[el] = toRef(data[el])})
+
 		watch(data, (dataValue) => {
 			validateData(dataValue, form_name);
 		}, { deep: true });

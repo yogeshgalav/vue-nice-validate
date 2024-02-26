@@ -4,9 +4,9 @@ import { TValidationField } from './types';
 
 export default function useDirective(validationFields: TValidationField[]){
 
-	const {addField, updateField} = useValidationField(validationFields);
+	const { addField, updateField, deleteField } = useValidationField(validationFields);
 	// register a custom directive called v-validate
-	const validateDirective = {
+	const vValidate = {
 		updated(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): boolean {
 			
 			if(!vnode.dirs?.length){
@@ -20,9 +20,8 @@ export default function useDirective(validationFields: TValidationField[]){
 			if (!field_id) {
 				return false;
 			}
-			const field_name = getFieldName(vnode);
 			const form_name = getFormName(vnode.props?.form, binding.arg);
-			const validator_field = updateField(field_id, binding.value, field_name, form_name);
+			const validator_field = updateField(field_id, binding.value, form_name);
 
 			return validator_field ? true : false;
 		},
@@ -38,10 +37,17 @@ export default function useDirective(validationFields: TValidationField[]){
 			const form_name = getFormName(vnode.props?.form, binding.arg);
 
 			//add field to input fields bag
-			const validator_field = addField(field_id, binding.value, field_name, form_name);
+			const validator_field = addField(field_id, binding.value, field_name, form_name, !!binding.modifiers.all);
 			
 			return validator_field ? true : false;
 		},
+		unmounted(el: HTMLElement, binding: DirectiveBinding, vnode: VNode): boolean {
+			const field_id = getFieldId(vnode);
+			if (!field_id) {
+				return false;
+			}
+			return deleteField(field_id);
+		}
 	}
 
 	function getFieldId(vnode: VNode){
@@ -76,6 +82,6 @@ export default function useDirective(validationFields: TValidationField[]){
 	}
 
 	return {
-		validateDirective
+		vValidate
 	}
 }
