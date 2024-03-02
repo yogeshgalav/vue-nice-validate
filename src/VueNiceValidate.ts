@@ -13,7 +13,7 @@ export default function useVueNiceValidate() {
 	const { vValidate } = useDirective(validationFields);
 	const {validationRules, addValidationRules} = useValidationRules();
 
-	const { addField } = useValidationField(validationFields);
+	const { addValidationFields } = useValidationField(validationFields);
 	const { validateForm } = useFormValidator(validationFields, formErrors, validationRules);
 
 	return {
@@ -22,7 +22,7 @@ export default function useVueNiceValidate() {
 
 		vValidate, 
 
-		addField,
+		addValidationFields,
 
 		addValidationRules,
 
