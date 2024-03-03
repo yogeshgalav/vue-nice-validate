@@ -5,27 +5,27 @@
 			<form>
 				<div class="mb-4">
 					<label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
-					<input type="text" id="full-name" name="full-name"
+					<input type="text" id="full_name" name="full_name" v-validate="'required'"
 						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
 				</div>
 				<div class="mb-4">
 					<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-					<input type="email" id="email" name="email"
+					<input type="email" id="email" name="email" v-validate="'required|email'"
 						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
 				</div>
 				<div class="mb-4">
 					<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-					<input type="password" id="password" name="password"
+					<input type="password" id="password" name="password" v-validate="'required'"
 						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
 				</div>
 				<div class="mb-4">
 					<label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-					<input type="password" id="confirm-password" name="confirm-password"
+					<input type="password" id="confirm-password" name="confirm-password" v-validate="'required|confirm:password'"
 						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
 				</div>
 				<div class="mb-4">
 					<label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-					<input type="tel" id="phone" name="phone"
+					<input type="tel" id="phone" name="phone" v-validate="'required|phoneRule'"
 						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
 				</div>
 				<button type="submit"

@@ -1,4 +1,14 @@
 # .npmignore
+.vscode/
 .husky/
 docs/
 example/
+node_modules/
+
+.commitlintrc.js
+.editorconfig
+.eslintrc.js
+.gitignore
+
+tsconfig.json
+vite.config.json

@@ -15,6 +15,11 @@
 # Vue Nice Validate
 VueNIceValidate is the light weight validation package. This package allows developers to full fill their basic requirements for form validation without heavy templating, heavy computaion and much code. You can validate single input, multiple inputs, single form or third party component with ease. You can easily access and modify field errors, rules and messages. 
 
+**Here are some usefull links**
+1. [Documentation](https://vue-nice-validate.netlify.app/) 
+2. [Demo](#)
+3. [Discord](https://discord.com/channels/1193587847165378670/1193587848402714666)
+
 This package is in early stage so feel free to make contribution and make this package better.
 ## Installation
 The latest version supports Vue3, install it via npm
