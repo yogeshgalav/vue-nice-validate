@@ -20,7 +20,7 @@ const i18n = createI18n({
 const app = createApp(App);
 
 const messageFormatter = (rule, params)=>{
-	return i18n.global.t(rule.toUpperCase(), params)
+	return i18n.global.t('VALIDATION.'+rule.toUpperCase(), params)
 };
 app.use(ValidatePlugin,{messageFormatter});
 app.use(i18n);

@@ -17,7 +17,7 @@ VueNIceValidate is the light weight validation package. This package allows deve
 
 **Here are some usefull links**
 1. [Documentation](https://vue-nice-validate.netlify.app/) 
-2. [Demo](#)
+2. [Demo](https://stackblitz.com/edit/vitejs-vite-fjbkrt?file=src%2FApp.vue)
 3. [Discord](https://discord.com/channels/1193587847165378670/1193587848402714666)
 
 This package is in early stage so feel free to make contribution and make this package better.

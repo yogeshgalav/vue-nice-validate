@@ -1,3 +1,15 @@
 {
-	"REQUIRED": "It is a required field."
+	"VALIDATION": {
+		"REQUIRED": "Please enter {attribute}.",
+		"EMAIL": "The {attribute} must be a valid email address.",
+		"NUMERIC": "The {attribute} must be a number.",
+		"CONFIRMED": "The {attribute} confirmation does not match.",
+		"PHONERULE": "The {attribute} can contain only numbers and hyphen."
+	},
+	"FIRST_NAME":"First Name",
+	"LAST_NAME":"Last Name",
+	"EMAIL":"email",
+	"PHONE":"Phone Number",
+	"PASSWORD":"Password",
+	"CONFIRM_PASSWORD":"Confirm Password"
 }
