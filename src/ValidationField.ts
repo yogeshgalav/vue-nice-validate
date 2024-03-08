@@ -24,6 +24,20 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 		return already_present_field;
 	}
+	type fieldObjectValue = {
+		rules: Record<string, boolean | Record<string, string>>;
+		field_name: string;
+		form_name?: string;
+		validate_all_rules?: boolean;
+	}
+	function addValidationFields(fieldsObject: Record<string, fieldObjectValue>): TValidationField[] {
+		Object.keys(fieldsObject).forEach(fieldId=>{
+			const field = fieldsObject[fieldId];
+			addField(fieldId, field.rules, field.field_name, field.form_name, field.validate_all_rules);
+		});
+
+		return validationFields;
+	}
 	function addField(fieldId: string, rules: string | Record<string, any>, fieldName: string, formName?: string, all: boolean = false): TValidationField | false{
 
 		const validation_rules = createRuleObject(rules);
@@ -111,6 +125,7 @@ export default function useValidationFields(validationFields: TValidationField[]
 
 	return {
 		addField,
+		addValidationFields,
 		updateField,
 		deleteField
 	}

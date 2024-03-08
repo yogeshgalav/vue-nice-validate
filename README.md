@@ -15,6 +15,11 @@
 # Vue Nice Validate
 VueNIceValidate is the light weight validation package. This package allows developers to full fill their basic requirements for form validation without heavy templating, heavy computaion and much code. You can validate single input, multiple inputs, single form or third party component with ease. You can easily access and modify field errors, rules and messages. 
 
+**Here are some usefull links**
+1. [Documentation](https://vue-nice-validate.netlify.app/) 
+2. [Demo](https://stackblitz.com/edit/vitejs-vite-fjbkrt?file=src%2FApp.vue)
+3. [Discord](https://discord.com/channels/1193587847165378670/1193587848402714666)
+
 This package is in early stage so feel free to make contribution and make this package better.
 ## Installation
 The latest version supports Vue3, install it via npm
@@ -41,11 +46,12 @@ import {useVueNiceValidate} from 'vue-nice-validate';
 const {vValidate, formErrors, validateForm, validationFields} = useVueNiceValidate();
 ```
 
-## Declare directive
+## Use as directive
+You can add validation rules via `v-validate` directive for template usage
 ```js
 const { vValidate } = useVueNiceValidate();
 
-//optional api
+//options api
 export default {
 	...
 	directives: {
@@ -55,14 +61,30 @@ export default {
 }
 ```
 
-## Use directive
 ```html
-<input id="email" v-validate="'required|email'" />
+<input id="email" :name="$t('email')" v-validate="'required|email'" />
 ```
 The html element must contain id attribute. This id attribute must contain unique value which should reperesnt variable(reacive property) name. This package take rules from your directive in template and values from your reactive properties, And combine them with help of id attribute.
 so for `let email = ref('')` you can use `<input id="email" />`
 for `let loginForm = reactive({email:''})` you can use `<input id="loginForm.email" />`
 for `let userProfile = reactive({emails:[{email:''}]})` you can use `<input id="userProfile.emails.0.email" />`
+
+## use as Object
+You can also add validation rules via function `addValidationFields` which accepts the following syntax
+```js
+const { addValidationFields } = useVueNiceValidate();
+
+const validationFields = {
+	'email': {
+		'rules': 'required|email',
+		'field_name': $t('email'),
+		'form_name': '', //optional
+		'validate_all_rules': false, //optional
+	}
+}
+
+addValidationFields(validationFields);
+```
 
 ## Check validation
 ```js
@@ -83,10 +105,11 @@ validateForm is a promise which resolves with boolean result, it can be used jus
 Or in 'onMounted' if you want to start validationg form and show errors on pageLoad
 This functions will add respective field errors to formErrors reactive array.
 
-## Declare formErrors
+## show Form Errors
+### declare formErrors
 ```js
 const { formErrors } = useVueNiceValidate();
-//optional api
+//options api
 export default {
 	...
 	data() {
@@ -100,7 +123,7 @@ export default {
 }
 ```
 
-## use formErrors
+### use formErrors
 ```html
 <input id="field_id" v-validate="'required'">
 <span class="text-danger">{{ formErrors['field_id'] }}</span>
@@ -181,14 +204,6 @@ const { validateForm } = useVueNiceValidate();
 		...
 	}
 ...
-```
-### Manually Create field
-If you still struggle with any third party component or have complex requirement just create the virtual field by using createField function.
-```js
-	function createField(fieldId: string, rules: string | Record<string, any>, fieldName?: string, formName?: string, touch?: boolean): TValidationField | false
-```
-```js
-const { createField } = useVueNiceValidate();
 ```
 
 ### Manually Manage Errors

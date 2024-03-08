@@ -19,8 +19,8 @@ export default function useFieldValidator(formErrors: TFormErrors, validationRul
 		for (const [rule_name, rule_params] of Object.entries(field.rules)) {
 			const ruleFunction = validationRules[rule_name];
 			if (!ruleFunction) {
-			/* eslint-disable-next-line */
-			console.error('Validation rule "' + rule_name + '" not found.');
+				/* eslint-disable-next-line */
+				console.error('Validation rule "' + rule_name + '" not found.');
 				continue;
 			}
 

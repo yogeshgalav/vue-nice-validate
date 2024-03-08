@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './index.css'
+import './style.css'
 
 import { ValidatePlugin } from 'vue-nice-validate';
 import { createI18n } from 'vue-i18n';
@@ -20,7 +20,7 @@ const i18n = createI18n({
 const app = createApp(App);
 
 const messageFormatter = (rule, params)=>{
-	return i18n.global.t(rule.toUpperCase(), params)
+	return i18n.global.t('VALIDATION.'+rule.toUpperCase(), params)
 };
 app.use(ValidatePlugin,{messageFormatter});
 app.use(i18n);

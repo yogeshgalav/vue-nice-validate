@@ -1,33 +1,87 @@
 <template>
 	<div class="min-h-screen flex items-center justify-center">
-		<div class="bg-white p-8 rounded-lg shadow-md w-full md:w-1/2 lg:w-1/3">
-			<h2 class="text-2xl font-semibold mb-4">Sign Up</h2>
-			<form>
-				<div class="mb-4">
-					<label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
-					<input type="text" id="full-name" name="full-name"
-						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
+		<div class="bg-white p-8 rounded-lg shadow-md ">
+			<h2 class="text-2xl font-semibold pb-6">Sign Up</h2>
+			<form class="w-full max-w-lg text-left" @submit.prevent="onSubmit">
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="first_name">
+							{{ $t('FIRST_NAME') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+							:class="formErrors['first_name'] ? 'border-red-500' : 'border-gray-200'"
+							id="first_name" type="text" v-validate="'required'" v-model="data.first_name"
+							:name="$t('FIRST_NAME')">
+						<p class="text-red-500 text-xs italic">{{ formErrors['first_name'] }}</p>
+					</div>
+					<div class="w-full md:w-1/2 px-3">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="last_name">
+							{{ $t('LAST_NAME') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							:class="formErrors['last_name'] ? 'border-red-500' : 'border-gray-200'"
+							id="last_name" type="text" v-validate="'required'" v-model="data.last_name"
+							:name="$t('LAST_NAME')">
+							<p class="text-red-500 text-xs italic">{{ formErrors['last_name'] }}</p>
+					</div>
 				</div>
-				<div class="mb-4">
-					<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-					<input type="email" id="email" name="email"
-						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="email">
+							{{ $t('EMAIL') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+							:class="formErrors['email'] ? 'border-red-500' : 'border-gray-200'"
+							id="email" type="text" v-validate="'required|email'" v-model="data.email"
+							:name="$t('EMAIL')">
+						<p class="text-red-500 text-xs italic">{{ formErrors['email'] }}</p>
+					</div>
+					<div class="w-full md:w-1/2 px-3">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="phone_number">
+							{{ $t('PHONE') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							:class="formErrors['phone_number'] ? 'border-red-500' : 'border-gray-200'"
+							id="phone.phone_number" type="text" v-validate="'required'" v-model="data.phone.phone_number"
+							:name="$t('PHONE')">
+							<p class="text-red-500 text-xs italic">{{ formErrors['phone.phone_number'] }}</p>
+					</div>
 				</div>
-				<div class="mb-4">
-					<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-					<input type="password" id="password" name="password"
-						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="password">
+							{{ $t('PASSWORD') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+							:class="formErrors['password'] ? 'border-red-500' : 'border-gray-200'"
+							id="password" type="text" v-validate="'required|min:8'" v-model="data.password"
+							:name="$t('PASSWORD')">
+						<p class="text-red-500 text-xs italic">{{ formErrors['password'] }}</p>
+					</div>
+					<div class="w-full md:w-1/2 px-3">
+						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+							for="confirm_password">
+							{{ $t('CONFIRM_PASSWORD') }}
+						</label>
+						<input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							:class="formErrors['confirm_password'] ? 'border-red-500' : 'border-gray-200'"
+							id="confirm_password" type="text" v-validate="'required|confirmed:password'" v-model="data.confirm_password"
+							:name="$t('CONFIRM_PASSWORD')">
+							<p class="text-red-500 text-xs italic">{{ formErrors['confirm_password'] }}</p>
+					</div>
 				</div>
-				<div class="mb-4">
-					<label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-					<input type="password" id="confirm-password" name="confirm-password"
-						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
-				</div>
-				<div class="mb-4">
-					<label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-					<input type="tel" id="phone" name="phone"
-						class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-200">
-				</div>
+				
 				<button type="submit"
 					class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">Sign
 					Up</button>
@@ -41,47 +95,27 @@ import { useVueNiceValidate } from 'vue-nice-validate';
 const { vValidate, formErrors, validateForm, validationFields } = useVueNiceValidate();
 
 let data = reactive({
-	'full_name': '',
+	'first_name': '',
+	'last_name': '',
 	'email': '',
-	'phone_number': '',
+	'phone': {
+		country_code:'',
+		phone_number: ''
+	},
 	'password': '',
 	'confirm_password': '',
 });
 
-function onEnter() {
-	var text = document.getElementById('text');
+function onSubmit() {
+
 	validateForm(data).then(result => {
+		console.log(validationFields);
+
 		if (result) {
-			text.innerHTML = 'Its valid';
-			text.style.color = '#008000';
+			console.log('Its valid');
 		} else {
-			text.innerHTML = 'Its not valid';
-			text.style.color = '#ff0000';
+			console.log('Its not valid');
 		}
 	});
 }
-</script>
-  
-<style>
-#app {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
-	color: #2c3e50;
-	margin-top: 60px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-}
-
-#input {
-	padding: 10px;
-}
-
-#button {
-	margin: 10px;
-}
-</style>
-  
+</script> 
